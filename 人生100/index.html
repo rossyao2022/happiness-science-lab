@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>幸福人生100岁 | 年龄金句、礼物与 SPIRE 指南</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero" id="top">
+      <nav class="nav" aria-label="主导航">
+        <a class="brand" href="../index.html">幸福人生100岁</a>
+        <div class="nav-links">
+          <a href="#ageGuide">年龄指南</a>
+          <a href="#quoteWall">100岁总览</a>
+        </div>
+      </nav>
+
+      <div class="hero-grid">
+        <section class="hero-copy-block" aria-labelledby="heroTitle">
+          <p class="eyebrow">0-100 岁幸福礼物地图</p>
+          <h1 id="heroTitle">幸福人生100岁</h1>
+          <p class="hero-copy">
+            选择一个年龄，生成这一岁的金句、礼物建议，以及基于 SPIRE 的幸福行动指南。
+          </p>
+
+          <form class="age-form" id="heroAgeForm" aria-label="选择年龄">
+            <label for="heroAgeInput">选择年龄</label>
+            <div class="age-control">
+              <input
+                id="heroAgeInput"
+                name="age"
+                type="number"
+                min="0"
+                max="100"
+                value="30"
+                inputmode="numeric"
+                aria-describedby="heroQuotePreview"
+              />
+              <button type="submit">生成这一岁</button>
+            </div>
+            <p id="heroQuotePreview" class="quote-preview">30岁 / 你的未来，藏在你现在的努力里</p>
+          </form>
+        </section>
+
+        <section class="age-guide-card" id="ageGuide" aria-live="polite">
+          <div class="result-head">
+            <div>
+              <p class="result-kicker" id="resultTheme">而立之年</p>
+              <h2><span id="resultAge">30</span><small>岁</small></h2>
+            </div>
+            <p id="resultWish">愿30岁的你，不被焦虑推着走，而被真正想要的生活牵引。</p>
+          </div>
+
+          <blockquote id="resultQuote">你的未来，藏在你现在的努力里。</blockquote>
+
+          <div class="guide-grid">
+            <article class="guide-panel quote-panel">
+              <p class="panel-label">这一岁的解读</p>
+              <p id="resultAnalysis"></p>
+              <div class="psychology-card compact">
+                <strong id="resultPsychTitle"></strong>
+                <span id="resultPsychText"></span>
+              </div>
+            </article>
+
+            <article class="guide-panel spire-panel">
+              <p class="panel-label">SPIRE 幸福指南</p>
+              <div class="spire-list" id="spireList"></div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </header>
+
+    <main>
+      <section class="age-dock" aria-label="年龄快速定位">
+        <div class="dock-inner">
+          <div class="dock-current">
+            <span class="dock-age" id="dockAge">30岁</span>
+            <span class="dock-quote" id="dockQuote">你的未来，藏在你现在的努力里</span>
+          </div>
+
+          <div class="dock-controls">
+            <button class="icon-button" type="button" id="prevAge" aria-label="上一岁">‹</button>
+            <input id="ageRange" type="range" min="0" max="100" value="30" aria-label="拖动选择年龄" />
+            <button class="icon-button" type="button" id="nextAge" aria-label="下一岁">›</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="milestones" aria-label="常用年龄">
+        <div class="section-inner">
+          <div class="milestone-list" id="milestoneList"></div>
+        </div>
+      </section>
+
+      <section class="gift-section" aria-labelledby="giftTitle">
+        <div class="section-heading">
+          <p class="eyebrow">礼物建议</p>
+          <h2 id="giftTitle">适合这一岁的四份心意</h2>
+          <p>礼物不是价格竞赛，而是对这个年龄真实需要的理解。</p>
+        </div>
+        <div class="gift-showcase" id="resultGifts"></div>
+      </section>
+
+      <section class="stairs-section" id="quoteWall">
+        <div class="section-heading">
+          <p class="eyebrow">100岁总览</p>
+          <h2>一岁一阶，一阶一份祝福</h2>
+        </div>
+        <div class="stair-frame">
+          <div class="stair-shadow" aria-hidden="true"></div>
+          <div class="stair-list" id="stairList"></div>
+        </div>
+      </section>
+    </main>
+
+    <button class="back-top" type="button" id="backTop" aria-label="回到顶部">↑</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>

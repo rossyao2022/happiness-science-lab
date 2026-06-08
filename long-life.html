@@ -1,107 +1,58 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>幸福100岁 | Happy 100 - HappyKua</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="0; url=人生100/index.html" />
+    <title>正在前往幸福人生100岁</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;800&family=Noto+Sans+SC:wght@400;700&display=swap');
-        body { font-family: 'Lexend', 'Noto Sans SC', sans-serif; background: #0f172a; color: #f8fafc; }
-        .stat-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.1); border-radius: 24px; }
-        .glow-purple { box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
-        .lang-hidden { display: none !important; }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        background: #fff8e8;
+        color: #201b16;
+        font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(520px, calc(100% - 40px));
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        color: #771217;
+        font-size: 2rem;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0 0 22px;
+        color: #5e554c;
+        line-height: 1.7;
+      }
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        border-radius: 8px;
+        padding: 0 18px;
+        background: #a7191f;
+        color: #f4d57b;
+        font-weight: 900;
+        text-decoration: none;
+      }
     </style>
-</head>
-<body class="pb-20">
-    <nav class="p-6 flex justify-between items-center">
-        <a href="/lab" class="text-purple-400 hover:text-purple-300"><i class="fas fa-arrow-left"></i></a>
-        <button onclick="toggleLang()" id="langBtn" class="text-xs font-bold border border-purple-500/50 text-purple-400 px-4 py-1 rounded-full">English</button>
-    </nav>
-
-    <main class="max-w-4xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h1 class="text-5xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-                <span class="lang-zh">幸福100岁</span>
-                <span class="lang-en lang-hidden">HAPPY 100</span>
-            </h1>
-            <p class="text-slate-400 max-w-xl mx-auto">
-                <span class="lang-zh">幸福不是短跑，是一场跨越世纪的实验。我们通过数据管理你的生命长度与宽度。</span>
-                <span class="lang-en lang-hidden">Happiness is not a sprint, but a century-long experiment. We manage your lifespan and healthspan through data.</span>
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            <!-- 生物黑客模块 -->
-            <div class="stat-card p-8 glow-purple">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400"><i class="fas fa-dna"></i></div>
-                    <span class="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded">BIOTECH</span>
-                </div>
-                <h3 class="text-xl font-bold mb-2">
-                    <span class="lang-zh">端粒保护计划</span><span class="lang-en lang-hidden">Telomere Project</span>
-                </h3>
-                <p class="text-sm text-slate-500 mb-6">
-                    <span class="lang-zh">通过冥想与饮食减缓细胞老化速度。</span>
-                    <span class="lang-en lang-hidden">Slowing cellular aging through meditation and nutrition.</span>
-                </p>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-purple-500 h-full w-2/3"></div></div>
-            </div>
-
-            <!-- Ikigai 意义模块 -->
-            <div class="stat-card p-8 hover:border-pink-500/30 transition">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center text-pink-400"><i class="fas fa-seedling"></i></div>
-                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded">MEANING</span>
-                </div>
-                <h3 class="text-xl font-bold mb-2">
-                    <span class="lang-zh">Ikigai 寻找</span><span class="lang-en lang-hidden">Ikigai Discovery</span>
-                </h3>
-                <p class="text-sm text-slate-500 mb-6">
-                    <span class="lang-zh">找到让你每天清晨起床的那个理由。</span>
-                    <span class="lang-en lang-hidden">Finding the reason that makes you want to get up every morning.</span>
-                </p>
-                <button class="text-xs font-bold text-pink-400 uppercase tracking-tighter">Enter Experiment <i class="fas fa-external-link-alt ml-1"></i></button>
-            </div>
-        </div>
-
-        <!-- 极简长寿清单 -->
-        <div class="stat-card p-8">
-            <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <i class="fas fa-list-check text-green-400 text-sm"></i>
-                <span class="lang-zh">百岁清单 A - Action</span>
-                <span class="lang-en lang-hidden">Centenarian Checklist</span>
-            </h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center p-4 bg-slate-800/50 rounded-2xl">
-                    <div class="text-xs text-slate-400 mb-1">Diet</div>
-                    <div class="text-sm font-bold">16:8 Fast</div>
-                </div>
-                <div class="text-center p-4 bg-slate-800/50 rounded-2xl">
-                    <div class="text-xs text-slate-400 mb-1">Sleep</div>
-                    <div class="text-sm font-bold">7.5 Hours</div>
-                </div>
-                <div class="text-center p-4 bg-slate-800/50 rounded-2xl">
-                    <div class="text-xs text-slate-400 mb-1">Social</div>
-                    <div class="text-sm font-bold">1 Deep Talk</div>
-                </div>
-                <div class="text-center p-4 bg-slate-800/50 rounded-2xl">
-                    <div class="text-xs text-slate-400 mb-1">Mind</div>
-                    <div class="text-sm font-bold">5m Silence</div>
-                </div>
-            </div>
-        </div>
+  </head>
+  <body>
+    <main>
+      <h1>正在前往幸福人生100岁</h1>
+      <p>旧版“幸福100岁”已替换为年龄金句、礼物建议与 SPIRE 幸福指南。</p>
+      <a href="人生100/index.html">立即打开新版</a>
     </main>
-
-    <script>
-        let currentLang = 'zh';
-        function toggleLang() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
-            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
-            document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
-        }
-    </script>
-</body>
+  </body>
 </html>
