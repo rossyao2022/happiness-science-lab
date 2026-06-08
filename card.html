@@ -21,7 +21,10 @@
 <body class="flex flex-col items-center">
     <nav class="w-full p-6 flex justify-between items-center">
         <a href="/lab" class="text-teal-600"><i class="fas fa-arrow-left"></i></a>
-        <button onclick="toggleLang()" id="langBtn" class="text-xs font-bold text-teal-800">English</button>
+        <div class="flex items-center gap-3">
+            <div data-happykua-account-widget></div>
+            <button onclick="toggleLang()" id="langBtn" class="text-xs font-bold text-teal-800">English</button>
+        </div>
     </nav>
 
     <main class="flex-1 flex flex-col items-center justify-center gap-12">
@@ -35,7 +38,7 @@
             </p>
         </div>
 
-        <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+        <div class="card-container" onclick="drawCard()">
             <div class="card-inner">
                 <!-- 正面 -->
                 <div class="card-face card-front">
@@ -59,13 +62,32 @@
             </div>
         </div>
 
-        <button class="mt-8 bg-teal-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-teal-200 hover:bg-teal-700 transition">
+        <button onclick="drawCard()" class="mt-8 bg-teal-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-teal-200 hover:bg-teal-700 transition">
             <span class="lang-zh">换一张</span><span class="lang-en lang-hidden">Shuffle</span>
         </button>
     </main>
 
+    <script src="auth.js"></script>
     <script>
         let currentLang = 'zh';
+        function drawCard() {
+            document.querySelector('.card-inner').classList.toggle('flipped');
+            const auth = window.HappyKuaAuth;
+            if (!auth) return;
+            const current = auth.getModuleData("card");
+            const draws = Number(current.draws || 0) + 1;
+            auth.setModuleData("card", {
+                draws,
+                lastCard: currentLang === 'zh' ? '深度倾听' : 'Deep Listening',
+                updatedAt: new Date().toISOString(),
+                progress: {
+                    completed: true,
+                    count: draws,
+                    lastActivityAt: new Date().toISOString()
+                }
+            });
+        }
+
         function toggleLang() {
             currentLang = currentLang === 'zh' ? 'en' : 'zh';
             document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));

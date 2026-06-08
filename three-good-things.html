@@ -331,7 +331,10 @@
                 <div class="brand-word text-xl">HappyKua</div>
                 <div class="text-[11px] font-black text-slate-400 uppercase tracking-wider" data-i18n="subtitle">每日三好</div>
             </div>
-            <button class="icon-btn" id="langButton" aria-label="Switch language"><i class="fas fa-globe"></i></button>
+            <div class="flex items-center gap-2">
+                <div data-happykua-account-widget></div>
+                <button class="icon-btn" id="langButton" aria-label="Switch language"><i class="fas fa-globe"></i></button>
+            </div>
         </header>
 
         <section id="todayView" class="view active" aria-label="Today">
@@ -508,6 +511,7 @@
         <button onclick="showToast(texts[currentLang].comingSoon)"><i class="fas fa-users block mb-1"></i><span data-i18n="navCircle">关系圈</span></button>
     </nav>
 
+    <script src="auth.js"></script>
     <script>
         const STORAGE_KEY = "happykua-three-good-things";
         const todayKey = new Date().toISOString().slice(0, 10);
@@ -615,7 +619,7 @@
         let currentAction = null;
         let recognition = null;
 
-        function loadRecords() {
+        function readLegacyRecords() {
             try {
                 return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
             } catch {
@@ -623,8 +627,44 @@
             }
         }
 
+        function buildPracticeProgress(records) {
+            const sortedRecords = [...records].sort((a, b) => a.date.localeCompare(b.date));
+            return {
+                completed: records.length > 0,
+                count: records.length,
+                streak: calculateStreak(sortedRecords),
+                lastActivityAt: records[records.length - 1]?.savedAt || null
+            };
+        }
+
+        function loadRecords() {
+            const auth = window.HappyKuaAuth;
+            if (!auth) return readLegacyRecords();
+
+            const moduleData = auth.getModuleData("threeGoodThings");
+            if (Array.isArray(moduleData.records)) return moduleData.records;
+
+            const legacyRecords = readLegacyRecords();
+            if (legacyRecords.length && auth.getCurrentUser().isGuest) {
+                auth.setModuleData("threeGoodThings", {
+                    records: legacyRecords,
+                    progress: buildPracticeProgress(legacyRecords)
+                });
+            }
+            return auth.getCurrentUser().isGuest ? legacyRecords : [];
+        }
+
         function writeRecords(records) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+            const auth = window.HappyKuaAuth;
+            if (auth) {
+                auth.setModuleData("threeGoodThings", {
+                    records,
+                    progress: buildPracticeProgress(records)
+                });
+            }
+            if (!auth || auth.getCurrentUser().isGuest) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+            }
         }
 
         function showView(viewId) {
@@ -846,7 +886,11 @@
         }
 
         function clearDemoData() {
-            localStorage.removeItem(STORAGE_KEY);
+            const auth = window.HappyKuaAuth;
+            if (auth) auth.clearModuleData("threeGoodThings");
+            if (!auth || auth.getCurrentUser().isGuest) {
+                localStorage.removeItem(STORAGE_KEY);
+            }
             renderToday();
             renderGarden();
             showToast(texts[currentLang].resetDone);
@@ -883,6 +927,7 @@
         });
 
         document.getElementById("goodThingInput").addEventListener("input", updateCharCount);
+        window.addEventListener("happykua:user-changed", () => window.location.reload());
 
         applyLanguage();
         renderToday();

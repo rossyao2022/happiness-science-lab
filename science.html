@@ -3,99 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>科学系统 | Science System - HappyKua</title>
+    <title>幸福科学 | Happiness Science - HappyKua</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&family=Noto+Sans+SC:wght@300;400;700&display=swap');
-        body { font-family: 'Lexend', 'Noto Sans SC', sans-serif; background: #fcfdfe; }
-        .science-card { background: white; border-radius: 24px; transition: all 0.3s ease; border: 1px solid #eef2f7; }
-        .science-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(51, 154, 240, 0.1); border-color: #339AF0; }
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=Nunito:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+        :root {
+            --ink: #1f3144;
+            --muted: #6f7f8f;
+            --paper: #fbfdf9;
+            --blue: #339af0;
+            --green: #51cf66;
+            --gold: #fcc419;
+            --coral: #ff6b6b;
+            --violet: #845ef7;
+            --line: rgba(31, 49, 68, 0.12);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            color: var(--ink);
+            font-family: 'Nunito', 'Noto Sans SC', sans-serif;
+            background:
+                radial-gradient(circle at 8% 4%, rgba(81, 207, 102, 0.18), transparent 30%),
+                radial-gradient(circle at 92% 8%, rgba(51, 154, 240, 0.18), transparent 32%),
+                linear-gradient(180deg, #fbfdf9 0%, #eef8f5 58%, #f8fbff 100%);
+        }
+
+        .brand-font { font-family: 'Fraunces', 'Noto Sans SC', serif; }
+
+        .shell {
+            width: min(100%, 1180px);
+            margin: 0 auto;
+            padding: 20px 18px 72px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.92);
+            border-radius: 8px;
+            box-shadow: 0 20px 46px rgba(31, 49, 68, 0.08);
+            backdrop-filter: blur(18px);
+        }
+
+        .nav-link {
+            color: var(--muted);
+            font-weight: 900;
+            font-size: 12px;
+        }
+
+        .rainbow-line {
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(to right, var(--coral), var(--gold), var(--green), var(--blue), var(--violet));
+        }
+
         .lang-hidden { display: none !important; }
+
+        .discipline-card {
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.72);
+            border-radius: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .discipline-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px rgba(31, 49, 68, 0.08);
+        }
+
+        .icon-orb {
+            width: 46px;
+            height: 46px;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            color: white;
+            box-shadow: 0 12px 22px rgba(31, 49, 68, 0.12);
+        }
+
+        .tag {
+            display: inline-flex;
+            border-radius: 999px;
+            padding: 7px 10px;
+            background: rgba(51, 154, 240, 0.1);
+            color: #1971c2;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .research-card {
+            display: flex;
+            gap: 14px;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.72);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .research-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(51, 154, 240, 0.46);
+        }
+
+        .path-step {
+            position: relative;
+            border-left: 3px solid rgba(51, 154, 240, 0.24);
+            padding-left: 18px;
+        }
+
+        .path-step::before {
+            content: "";
+            position: absolute;
+            left: -8px;
+            top: 2px;
+            width: 13px;
+            height: 13px;
+            border-radius: 999px;
+            background: var(--blue);
+            box-shadow: 0 0 0 6px rgba(51, 154, 240, 0.12);
+        }
     </style>
 </head>
 <body>
-    <nav class="p-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-50">
-        <div class="flex items-center gap-3">
-            <a href="/lab" class="text-slate-400 hover:text-blue-500"><i class="fas fa-arrow-left"></i></a>
-            <div class="text-xl font-bold tracking-tighter text-blue-600">SCIENCE<span class="text-slate-300 ml-1">LAB</span></div>
-        </div>
-        <button onclick="toggleLang()" class="bg-slate-100 px-4 py-1.5 rounded-full text-xs font-bold">
-            <span id="langBtn">English</span>
-        </button>
-    </nav>
-
-    <header class="max-w-6xl mx-auto py-16 px-6 text-center">
-        <h1 class="text-4xl font-black mb-4">
-            <span class="lang-zh">幸福的科学系统</span>
-            <span class="lang-en lang-hidden">The Science of Happiness</span>
-        </h1>
-        <p class="text-slate-500">
-            <span class="lang-zh">从神经递质到积极心理学，拆解幸福的底层公式。</span>
-            <span class="lang-en lang-hidden">From neurotransmitters to positive psychology, decoding the formulas of well-being.</span>
-        </p>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-6 pb-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- 神经递质模块 -->
-        <div class="science-card p-8">
-            <div class="text-blue-500 text-3xl mb-6"><i class="fas fa-capsules"></i></div>
-            <h3 class="text-xl font-bold mb-4">
-                <span class="lang-zh">快乐四分子</span><span class="lang-en lang-hidden">D.O.S.E.</span>
-            </h3>
-            <ul class="space-y-4 text-sm text-slate-600">
-                <li class="flex justify-between"><span>Dopamine</span><span class="lang-zh">多巴胺/成就感</span><span class="lang-en lang-hidden">Reward</span></li>
-                <li class="flex justify-between"><span>Oxytocin</span><span class="lang-zh">催产素/联结感</span><span class="lang-en lang-hidden">Connection</span></li>
-                <li class="flex justify-between"><span>Serotonin</span><span class="lang-zh">血清素/归属感</span><span class="lang-en lang-hidden">Pride</span></li>
-                <li class="flex justify-between"><span>Endorphin</span><span class="lang-zh">内啡肽/止痛感</span><span class="lang-en lang-hidden">Painkiller</span></li>
-            </ul>
-        </div>
-
-        <!-- PERMA 模型 -->
-        <div class="science-card p-8 border-t-4 border-t-blue-400">
-            <div class="text-blue-400 text-3xl mb-6"><i class="fas fa-project-diagram"></i></div>
-            <h3 class="text-xl font-bold mb-4">
-                <span class="lang-zh">PERMA 模型</span><span class="lang-en lang-hidden">PERMA Model</span>
-            </h3>
-            <p class="text-xs text-slate-400 mb-4 italic">By Martin Seligman</p>
-            <div class="space-y-2">
-                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">P - Positive Emotion (积极情绪)</div>
-                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">E - Engagement (投入/心流)</div>
-                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">R - Relationships (人际关系)</div>
-                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">M - Meaning (意义感)</div>
-                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">A - Accomplishment (成就)</div>
-            </div>
-        </div>
-
-        <!-- 幸福仪表盘 -->
-        <div class="science-card p-8 bg-slate-900 text-white">
-            <h3 class="text-xl font-bold mb-6">
-                <span class="lang-zh">幸福仪表盘</span><span class="lang-en lang-hidden">My Dashboard</span>
-            </h3>
-            <div class="space-y-6">
+    <main class="shell">
+        <nav class="panel p-4 flex items-center justify-between sticky top-4 z-30">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-10 h-10 rounded-full bg-white/80 grid place-items-center text-slate-500 hover:text-blue-500 transition" aria-label="Back">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
                 <div>
-                    <div class="flex justify-between text-xs mb-2"><span>Sleep / 睡眠</span><span>85%</span></div>
-                    <div class="w-full bg-slate-700 h-1.5 rounded-full"><div class="bg-blue-400 h-full w-[85%] rounded-full"></div></div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-xs mb-2"><span>Social / 社交</span><span>40%</span></div>
-                    <div class="w-full bg-slate-700 h-1.5 rounded-full"><div class="bg-orange-400 h-full w-[40%] rounded-full"></div></div>
+                    <div class="brand-font text-xl leading-none">
+                        <span class="text-blue-500">Happiness</span><span class="text-slate-400"> Science</span>
+                    </div>
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-400">Knowledge • Union • Action</div>
                 </div>
             </div>
-            <button class="w-full mt-8 bg-blue-500 py-3 rounded-xl text-sm font-bold">
-                <span class="lang-zh">同步数据</span><span class="lang-en lang-hidden">Sync Data</span>
-            </button>
-        </div>
+            <div class="flex items-center gap-4">
+                <a href="#research" class="nav-link hidden sm:block">
+                    <span class="lang-zh">研究入口</span><span class="lang-en lang-hidden">Research</span>
+                </a>
+                <div data-happykua-account-widget></div>
+                <button onclick="toggleLang()" class="bg-slate-100 px-4 py-2 rounded-full text-xs font-black">
+                    <i class="fas fa-globe mr-1"></i><span id="langBtn">English</span>
+                </button>
+            </div>
+        </nav>
+
+        <div class="rainbow-line my-5"></div>
+
+        <header class="grid lg:grid-cols-[1.08fr_0.92fr] gap-5 items-stretch">
+            <section class="panel p-7 md:p-10">
+                <div class="flex flex-wrap gap-2 mb-5">
+                    <span class="tag">SPIRE</span>
+                    <span class="tag">
+                        <span class="lang-zh">积极心理学</span><span class="lang-en lang-hidden">Positive Psychology</span>
+                    </span>
+                    <span class="tag">
+                        <span class="lang-zh">东方与西方</span><span class="lang-en lang-hidden">East & West</span>
+                    </span>
+                </div>
+                <h1 class="brand-font text-4xl md:text-6xl leading-[0.98] mb-5">
+                    <span class="lang-zh">幸福科学不是单一学科，而是一张人类繁荣地图。</span>
+                    <span class="lang-en lang-hidden">Happiness science is not one field. It is a map of human flourishing.</span>
+                </h1>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">
+                    <span class="lang-zh">这里把积极心理学、幸福 SPIRE、自然科学、哲学、社会学、经济学，以及东方修身智慧与西方实证研究放在同一张地图上，帮助用户从知道幸福，到连接生活，再到真正做到。</span>
+                    <span class="lang-en lang-hidden">This hub brings together positive psychology, SPIRE wellbeing, natural science, philosophy, sociology, economics, Eastern self-cultivation, and Western empirical research to help people move from knowing happiness to living it.</span>
+                </p>
+            </section>
+
+            <section class="panel p-6">
+                <h2 class="font-black text-xl mb-4">
+                    <span class="lang-zh">HappyKua 幸福科学总框架</span>
+                    <span class="lang-en lang-hidden">HappyKua Happiness Science Frame</span>
+                </h2>
+                <div class="space-y-3">
+                    <div class="discipline-card p-4">
+                        <p class="text-xs font-black text-slate-400 uppercase">Know / 知</p>
+                        <p class="font-black mt-1">
+                            <span class="lang-zh">理解幸福：理论、证据、数据</span>
+                            <span class="lang-en lang-hidden">Understand happiness: theory, evidence, data</span>
+                        </p>
+                    </div>
+                    <div class="discipline-card p-4">
+                        <p class="text-xs font-black text-slate-400 uppercase">Unite / 联</p>
+                        <p class="font-black mt-1">
+                            <span class="lang-zh">连接幸福：身体、关系、文化、社会</span>
+                            <span class="lang-en lang-hidden">Connect happiness: body, relationships, culture, society</span>
+                        </p>
+                    </div>
+                    <div class="discipline-card p-4">
+                        <p class="text-xs font-black text-slate-400 uppercase">Act / 行</p>
+                        <p class="font-black mt-1">
+                            <span class="lang-zh">练习幸福：微习惯、卡牌、实验</span>
+                            <span class="lang-en lang-hidden">Practice happiness: micro-habits, cards, experiments</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </header>
+
+        <section class="mt-6 panel p-6 md:p-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-sm font-black text-slate-400">
+                        <span class="lang-zh">跨学科地图</span><span class="lang-en lang-hidden">Interdisciplinary Map</span>
+                    </p>
+                    <h2 class="brand-font text-3xl md:text-4xl">
+                        <span class="lang-zh">从多个学科共同理解幸福</span>
+                        <span class="lang-en lang-hidden">Understanding happiness through many disciplines</span>
+                    </h2>
+                </div>
+                <p class="text-sm text-slate-500 max-w-lg">
+                    <span class="lang-zh">每个入口都可以未来发展成课程、卡牌、AI 问答和行动实验。</span>
+                    <span class="lang-en lang-hidden">Each gateway can later become a course, card deck, AI Q&A, or action experiment.</span>
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <article class="discipline-card p-5">
+                    <div class="icon-orb mb-4" style="background:linear-gradient(135deg,#ff6b6b,#ff922b)"><i class="fas fa-heart"></i></div>
+                    <h3 class="font-black text-xl mb-2">
+                        <span class="lang-zh">积极心理学</span><span class="lang-en lang-hidden">Positive Psychology</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <span class="lang-zh">研究优势、感恩、心流、意义、关系和成就，帮助用户把幸福变成可练习的能力。</span>
+                        <span class="lang-en lang-hidden">Strengths, gratitude, flow, meaning, relationships, and accomplishment as trainable wellbeing capacities.</span>
+                    </p>
+                </article>
+
+                <article class="discipline-card p-5">
+                    <div class="icon-orb mb-4" style="background:linear-gradient(135deg,#339af0,#51cf66)"><i class="fas fa-seedling"></i></div>
+                    <h3 class="font-black text-xl mb-2">幸福 SPIRE</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <span class="lang-zh">从 Spiritual、Physical、Intellectual、Relational、Emotional 五维看见完整幸福。</span>
+                        <span class="lang-en lang-hidden">A five-dimensional view: Spiritual, Physical, Intellectual, Relational, and Emotional wellbeing.</span>
+                    </p>
+                </article>
+
+                <article class="discipline-card p-5">
+                    <div class="icon-orb mb-4" style="background:linear-gradient(135deg,#5c7cfa,#339af0)"><i class="fas fa-atom"></i></div>
+                    <h3 class="font-black text-xl mb-2">
+                        <span class="lang-zh">自然科学</span><span class="lang-en lang-hidden">Natural Science</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <span class="lang-zh">连接神经科学、睡眠、运动、营养、压力系统和大脑可塑性，理解身体如何支持幸福。</span>
+                        <span class="lang-en lang-hidden">Neuroscience, sleep, movement, nutrition, stress systems, and neuroplasticity as the body side of wellbeing.</span>
+                    </p>
+                </article>
+
+                <article class="discipline-card p-5">
+                    <div class="icon-orb mb-4" style="background:linear-gradient(135deg,#845ef7,#5c7cfa)"><i class="fas fa-landmark"></i></div>
+                    <h3 class="font-black text-xl mb-2">
+                        <span class="lang-zh">哲学</span><span class="lang-en lang-hidden">Philosophy</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <span class="lang-zh">追问何为好生活：德性、意义、自由、节制、死亡、价值和人生方向。</span>
+                        <span class="lang-en lang-hidden">The good life: virtue, meaning, freedom, temperance, mortality, values, and direction.</span>
+                    </p>
+                </article>
+
+                <article class="discipline-card p-5">
+                    <div class="icon-orb mb-4" style="background:linear-gradient(135deg,#51cf66,#20c997)"><i class="fas fa-people-arrows"></i></div>
+                    <h3 class="font-black text-xl mb-2">
+                        <span class="lang-zh">社会学</span><span class="lang-en lang-hidden">Sociology</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <span class="lang-zh">理解家庭、社区、信任、孤独、阶层、制度和文化如何塑造个人幸福。</span>
+                        <span class="lang-en lang-hidden">Family, community, trust, loneliness, class, institutions, and culture as conditions for wellbeing.</span>
+                    </p>
+                </article>
+
+                <article class="discipline-card p-5">
+                    <div class="icon-orb mb-4" style="background:linear-gradient(135deg,#fcc419,#ff922b)"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="font-black text-xl mb-2">
+                        <span class="lang-zh">经济学</span><span class="lang-en lang-hidden">Economics</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <span class="lang-zh">从收入、分配、安全感、时间、公共政策和主观幸福感研究“社会如何支持幸福”。</span>
+                        <span class="lang-en lang-hidden">Income, distribution, security, time, public policy, and subjective wellbeing as social design questions.</span>
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="mt-6 grid lg:grid-cols-[0.95fr_1.05fr] gap-5">
+            <div class="panel p-6 md:p-8">
+                <p class="text-sm font-black text-slate-400">
+                    <span class="lang-zh">东方与西方</span><span class="lang-en lang-hidden">Eastern & Western Synthesis</span>
+                </p>
+                <h2 class="brand-font text-3xl md:text-4xl mt-1 mb-4">
+                    <span class="lang-zh">不是拼贴，而是合流</span>
+                    <span class="lang-en lang-hidden">Not a collage, but a synthesis</span>
+                </h2>
+                <div class="space-y-4">
+                    <div class="discipline-card p-4">
+                        <h3 class="font-black">
+                            <span class="lang-zh">东方：修身、知行合一、中庸、天人合一</span>
+                            <span class="lang-en lang-hidden">East: self-cultivation, knowing into doing, balance, harmony with life</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+                            <span class="lang-zh">强调日用即道，把幸福放进身体、关系、家庭、自然和行动里。</span>
+                            <span class="lang-en lang-hidden">Emphasizes daily practice, placing happiness into body, relationships, family, nature, and action.</span>
+                        </p>
+                    </div>
+                    <div class="discipline-card p-4">
+                        <h3 class="font-black">
+                            <span class="lang-zh">西方：实验、测量、干预、公共政策</span>
+                            <span class="lang-en lang-hidden">West: experiments, measurement, interventions, public policy</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+                            <span class="lang-zh">强调证据、模型、量表和可复制练习，让幸福从理念走向可验证。</span>
+                            <span class="lang-en lang-hidden">Emphasizes evidence, models, scales, and replicable practices to make happiness testable.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel p-6 md:p-8">
+                <p class="text-sm font-black text-slate-400">KUA 学习路径</p>
+                <h2 class="brand-font text-3xl md:text-4xl mt-1 mb-5">
+                    <span class="lang-zh">从知道幸福，到做到幸福</span>
+                    <span class="lang-en lang-hidden">From knowing happiness to doing happiness</span>
+                </h2>
+                <div class="space-y-5">
+                    <div class="path-step">
+                        <h3 class="font-black">Know / 知</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">用研究地图理解幸福来自哪里：身体、意义、关系、制度、文化和行动。</span>
+                            <span class="lang-en lang-hidden">Use the research map to understand where wellbeing comes from: body, meaning, relationships, systems, culture, and action.</span>
+                        </p>
+                    </div>
+                    <div class="path-step">
+                        <h3 class="font-black">Unite / 联</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">把学科知识连接到个人生活：今天我在哪个 SPIRE 维度需要照顾？</span>
+                            <span class="lang-en lang-hidden">Connect knowledge to life: which SPIRE dimension needs care today?</span>
+                        </p>
+                    </div>
+                    <div class="path-step">
+                        <h3 class="font-black">Act / 行</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">转化为一个微实验：三件好事、感谢、关系连接、睡眠、运动或意义行动。</span>
+                            <span class="lang-en lang-hidden">Turn it into a micro-experiment: three good things, gratitude, connection, sleep, movement, or meaning action.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="research" class="mt-6 panel p-6 md:p-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-sm font-black text-slate-400">
+                        <span class="lang-zh">世界幸福研究入口</span>
+                        <span class="lang-en lang-hidden">Global Happiness Research Gateway</span>
+                    </p>
+                    <h2 class="brand-font text-3xl md:text-4xl">
+                        <span class="lang-zh">连接世界范围内的幸福研究</span>
+                        <span class="lang-en lang-hidden">Connect to global wellbeing research</span>
+                    </h2>
+                </div>
+                <p class="text-sm text-slate-500 max-w-lg">
+                    <span class="lang-zh">这些入口适合未来接入数据解读、课程、卡牌和 AI 问答。</span>
+                    <span class="lang-en lang-hidden">These gateways can later power data interpretation, courses, card decks, and AI Q&A.</span>
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <a class="research-card" href="https://worldhappiness.report/" target="_blank" rel="noopener">
+                    <div class="icon-orb shrink-0" style="background:linear-gradient(135deg,#339af0,#5c7cfa)"><i class="fas fa-globe"></i></div>
+                    <div>
+                        <h3 class="font-black">World Happiness Report</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">全球幸福排名、国家比较和主观幸福感研究。</span>
+                            <span class="lang-en lang-hidden">Global rankings, country comparisons, and subjective wellbeing research.</span>
+                        </p>
+                    </div>
+                </a>
+
+                <a class="research-card" href="https://www.oecdbetterlifeindex.org/" target="_blank" rel="noopener">
+                    <div class="icon-orb shrink-0" style="background:linear-gradient(135deg,#51cf66,#20c997)"><i class="fas fa-balance-scale"></i></div>
+                    <div>
+                        <h3 class="font-black">OECD Better Life Index</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">住房、收入、工作、社区、教育、环境、健康等维度。</span>
+                            <span class="lang-en lang-hidden">Housing, income, jobs, community, education, environment, health, and more.</span>
+                        </p>
+                    </div>
+                </a>
+
+                <a class="research-card" href="https://www.gallup.com/analytics/318875/global-research.aspx" target="_blank" rel="noopener">
+                    <div class="icon-orb shrink-0" style="background:linear-gradient(135deg,#fcc419,#ff922b)"><i class="fas fa-poll"></i></div>
+                    <div>
+                        <h3 class="font-black">Gallup World Poll</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">全球民意、生活评价、情绪体验和社会信任数据。</span>
+                            <span class="lang-en lang-hidden">Global opinions, life evaluation, emotional experience, and social trust data.</span>
+                        </p>
+                    </div>
+                </a>
+
+                <a class="research-card" href="https://ourworldindata.org/happiness-and-life-satisfaction" target="_blank" rel="noopener">
+                    <div class="icon-orb shrink-0" style="background:linear-gradient(135deg,#845ef7,#5c7cfa)"><i class="fas fa-chart-area"></i></div>
+                    <div>
+                        <h3 class="font-black">Our World in Data</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">幸福、生活满意度、收入、健康和社会因素的可视化数据。</span>
+                            <span class="lang-en lang-hidden">Visual data on happiness, life satisfaction, income, health, and social factors.</span>
+                        </p>
+                    </div>
+                </a>
+
+                <a class="research-card" href="https://ppc.sas.upenn.edu/" target="_blank" rel="noopener">
+                    <div class="icon-orb shrink-0" style="background:linear-gradient(135deg,#ff6b6b,#fcc419)"><i class="fas fa-brain"></i></div>
+                    <div>
+                        <h3 class="font-black">Positive Psychology Center</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">积极心理学、PERMA、优势和幸福干预的研究入口。</span>
+                            <span class="lang-en lang-hidden">Research gateway for positive psychology, PERMA, strengths, and interventions.</span>
+                        </p>
+                    </div>
+                </a>
+
+                <a class="research-card" href="https://greatergood.berkeley.edu/" target="_blank" rel="noopener">
+                    <div class="icon-orb shrink-0" style="background:linear-gradient(135deg,#20c997,#339af0)"><i class="fas fa-hands-helping"></i></div>
+                    <div>
+                        <h3 class="font-black">Greater Good Science Center</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-zh">感恩、同理心、关系、利他和社会幸福的科普研究。</span>
+                            <span class="lang-en lang-hidden">Applied research on gratitude, empathy, relationships, altruism, and social wellbeing.</span>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </section>
     </main>
 
+    <script src="auth.js"></script>
     <script>
-        let currentLang = 'zh';
-        function toggleLang() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        let currentLang = localStorage.getItem('happykua-science-lang') || 'zh';
+
+        function applyLang() {
             document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
             document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
             document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
+            document.documentElement.lang = currentLang;
+            localStorage.setItem('happykua-science-lang', currentLang);
         }
+
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            applyLang();
+        }
+
+        applyLang();
+        window.HappyKuaAuth?.setModuleData("science", {
+            visitedAt: new Date().toISOString(),
+            progress: {
+                completed: true,
+                count: 1,
+                lastActivityAt: new Date().toISOString()
+            }
+        });
     </script>
 </body>
 </html>

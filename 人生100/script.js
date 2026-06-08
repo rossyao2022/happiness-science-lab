@@ -723,6 +723,24 @@ let activeAge = 30;
 let expandedAge = null;
 let suppressObserverUntil = 0;
 
+function recordLife100Progress(age) {
+  const auth = window.HappyKuaAuth;
+  if (!auth) return;
+
+  const detail = getAgeDetail(age);
+  auth.setModuleData("life100", {
+    activeAge: age,
+    theme: detail.theme,
+    quote: getQuote(age).quote,
+    updatedAt: new Date().toISOString(),
+    progress: {
+      completed: true,
+      count: 1,
+      lastActivityAt: new Date().toISOString()
+    }
+  });
+}
+
 function clampAge(value) {
   const number = Number.parseInt(value, 10);
   if (Number.isNaN(number)) return 0;
@@ -1052,6 +1070,7 @@ function syncActiveUI(age) {
 function setActiveAge(value, shouldScroll = false, shouldExpand = shouldScroll) {
   const age = clampAge(value);
   syncActiveUI(age);
+  recordLife100Progress(age);
 
   if (shouldExpand) {
     setExpandedAge(age);
@@ -1121,6 +1140,8 @@ nextAge.addEventListener("click", () => setActiveAge(activeAge + 1));
 backTop.addEventListener("click", () => {
   document.querySelector("#top").scrollIntoView({ behavior: "smooth" });
 });
+
+window.addEventListener("happykua:user-changed", () => window.location.reload());
 
 window.addEventListener("scroll", () => {
   backTop.classList.toggle("show", window.scrollY > 560);

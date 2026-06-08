@@ -17,7 +17,10 @@
 <body class="flex flex-col min-h-screen">
     <nav class="p-6 flex justify-between items-center bg-white/50 backdrop-blur-md">
         <a href="/lab" class="text-slate-400"><i class="fas fa-chevron-left mr-2"></i>Lab</a>
-        <button onclick="toggleLang()" id="langBtn" class="text-xs font-bold bg-slate-800 text-white px-4 py-1.5 rounded-full transition hover:bg-slate-700">English</button>
+        <div class="flex items-center gap-3">
+            <div data-happykua-account-widget></div>
+            <button onclick="toggleLang()" id="langBtn" class="text-xs font-bold bg-slate-800 text-white px-4 py-1.5 rounded-full transition hover:bg-slate-700">English</button>
+        </div>
     </nav>
 
     <main class="flex-1 max-w-5xl mx-auto w-full px-6 py-12">
@@ -34,7 +37,7 @@
                         </h2>
                         <div class="h-1 w-12 bg-slate-800 mt-4"></div>
                     </div>
-                    <div class="text-sm font-bold text-slate-400 italic">User: HappyKua_01</div>
+                    <div class="text-sm font-bold text-slate-400 italic" id="bookUserLabel">User: Guest</div>
                 </div>
             </div>
 
@@ -53,7 +56,7 @@
                                 <span class="lang-zh">个人天赋使用说明书</span>
                                 <span class="lang-en lang-hidden">Personal Talent Manual</span>
                             </h3>
-                            <p class="text-xs text-slate-400 mt-1">12,450 words generated · 2023.10.24</p>
+                            <p class="text-xs text-slate-400 mt-1" id="bookTalentStatus">等待生成天赋报告</p>
                         </div>
                         <i class="fas fa-chevron-right text-slate-300"></i>
                     </div>
@@ -65,7 +68,7 @@
                                 <span class="lang-zh">家庭幸福图谱报告</span>
                                 <span class="lang-en lang-hidden">Family Happiness Roadmap</span>
                             </h3>
-                            <p class="text-xs text-slate-400 mt-1">Status: Updated 2 days ago</p>
+                            <p class="text-xs text-slate-400 mt-1" id="bookFamilyStatus">等待生成家庭方案</p>
                         </div>
                         <i class="fas fa-chevron-right text-slate-300"></i>
                     </div>
@@ -77,7 +80,7 @@
                                 <span class="lang-zh">百岁人生健康白皮书</span>
                                 <span class="lang-en lang-hidden">Longevity Health Report</span>
                             </h3>
-                            <p class="text-xs text-slate-400 mt-1 italic">Waiting for more data...</p>
+                            <p class="text-xs text-slate-400 mt-1 italic" id="bookLifeStatus">Waiting for more data...</p>
                         </div>
                         <i class="fas fa-lock text-slate-300"></i>
                     </div>
@@ -86,14 +89,57 @@
         </div>
     </main>
 
+    <script src="auth.js"></script>
     <script>
         let currentLang = 'zh';
+        let bookVisitRecorded = false;
+
+        function recordBookVisit() {
+            const auth = window.HappyKuaAuth;
+            if (!auth || bookVisitRecorded) return;
+            bookVisitRecorded = true;
+            auth.setModuleData("book", {
+                openedAt: new Date().toISOString(),
+                progress: {
+                    completed: true,
+                    count: 1,
+                    lastActivityAt: new Date().toISOString()
+                }
+            });
+        }
+
+        function renderBookArchive() {
+            const auth = window.HappyKuaAuth;
+            if (!auth) return;
+            recordBookVisit();
+
+            const user = auth.getCurrentUser();
+            const talent = auth.getModuleData("talent");
+            const family = auth.getModuleData("family");
+            const life100 = auth.getModuleData("life100");
+
+            document.getElementById("bookUserLabel").innerText = `User: ${user.name || "Guest"}`;
+            document.getElementById("bookTalentStatus").innerText = talent.report
+                ? "Status: 天赋报告已归档"
+                : "等待生成天赋报告";
+            document.getElementById("bookFamilyStatus").innerText = family.report
+                ? "Status: 家庭方案已归档"
+                : "等待生成家庭方案";
+            document.getElementById("bookLifeStatus").innerText = Number.isFinite(Number(life100.activeAge))
+                ? `最近查看：${life100.activeAge} 岁幸福指南`
+                : "Waiting for more data...";
+        }
+
         function toggleLang() {
             currentLang = currentLang === 'zh' ? 'en' : 'zh';
             document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
             document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
             document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
         }
+
+        renderBookArchive();
+        window.addEventListener("happykua:user-changed", renderBookArchive);
+        window.addEventListener("happykua:data-changed", renderBookArchive);
     </script>
 </body>
 </html>

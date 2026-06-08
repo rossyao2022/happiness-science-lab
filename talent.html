@@ -187,6 +187,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
+                <div data-happykua-account-widget></div>
                 <button onclick="toggleLanguage()" class="ghost-btn px-3 py-2 text-xs flex items-center gap-2">
                     <i class="fas fa-globe"></i><span id="langDisplay">English</span>
                 </button>
@@ -295,6 +296,7 @@
         </section>
     </main>
 
+    <script src="auth.js"></script>
     <script>
         const TALENT_STATE_KEY = "happykua-talent-state";
         const TALENT_REPORT_KEY = "happykua-talent-report";
@@ -432,6 +434,32 @@
         let talentAnswers = [];
         let lastReport = null;
 
+        function buildTalentStatePayload() {
+            return {
+                currentStep,
+                talentAnswers,
+                chatHtml: document.getElementById("chatWindow").innerHTML
+            };
+        }
+
+        function buildTalentProgress(report = lastReport) {
+            return {
+                completed: Boolean(report),
+                count: talentAnswers.length,
+                lastActivityAt: new Date().toISOString()
+            };
+        }
+
+        function syncTalentModule(statePayload = buildTalentStatePayload(), report = lastReport) {
+            const auth = window.HappyKuaAuth;
+            if (!auth) return;
+            auth.setModuleData("talent", {
+                state: statePayload,
+                report,
+                progress: buildTalentProgress(report)
+            });
+        }
+
         window.onload = () => {
             restoreTalentState();
             applyLanguage();
@@ -525,14 +553,27 @@
         }
 
         function saveTalentState() {
-            localStorage.setItem(TALENT_STATE_KEY, JSON.stringify({
-                currentStep,
-                talentAnswers,
-                chatHtml: document.getElementById("chatWindow").innerHTML
-            }));
+            const payload = buildTalentStatePayload();
+            syncTalentModule(payload);
+            const auth = window.HappyKuaAuth;
+            if (!auth || auth.getCurrentUser().isGuest) {
+                localStorage.setItem(TALENT_STATE_KEY, JSON.stringify(payload));
+            }
         }
 
         function restoreTalentState() {
+            const auth = window.HappyKuaAuth;
+            const moduleData = auth?.getModuleData("talent") || {};
+            if (moduleData.state) {
+                currentStep = moduleData.state.currentStep || 0;
+                talentAnswers = moduleData.state.talentAnswers || [];
+                document.getElementById("chatWindow").innerHTML = moduleData.state.chatHtml || "";
+                lastReport = moduleData.report || null;
+                return;
+            }
+
+            if (auth && !auth.getCurrentUser().isGuest) return;
+
             try {
                 const state = JSON.parse(localStorage.getItem(TALENT_STATE_KEY) || "null");
                 if (!state) return;
@@ -541,6 +582,7 @@
                 document.getElementById("chatWindow").innerHTML = state.chatHtml || "";
                 const savedReport = JSON.parse(localStorage.getItem(TALENT_REPORT_KEY) || "null");
                 if (savedReport) lastReport = savedReport;
+                syncTalentModule(state, lastReport);
             } catch {
                 currentStep = 0;
                 talentAnswers = [];
@@ -553,7 +595,11 @@
                 return;
             }
             lastReport = buildTalentReport(talentAnswers);
-            localStorage.setItem(TALENT_REPORT_KEY, JSON.stringify(lastReport));
+            syncTalentModule(buildTalentStatePayload(), lastReport);
+            const auth = window.HappyKuaAuth;
+            if (!auth || auth.getCurrentUser().isGuest) {
+                localStorage.setItem(TALENT_REPORT_KEY, JSON.stringify(lastReport));
+            }
             renderReport(lastReport);
             showView("reportView");
         }
@@ -662,8 +708,12 @@
         }
 
         function restartTalentLab() {
-            localStorage.removeItem(TALENT_STATE_KEY);
-            localStorage.removeItem(TALENT_REPORT_KEY);
+            const auth = window.HappyKuaAuth;
+            if (auth) auth.clearModuleData("talent");
+            if (!auth || auth.getCurrentUser().isGuest) {
+                localStorage.removeItem(TALENT_STATE_KEY);
+                localStorage.removeItem(TALENT_REPORT_KEY);
+            }
             currentStep = 0;
             talentAnswers = [];
             lastReport = null;
@@ -713,6 +763,7 @@
             this.style.height = "auto";
             this.style.height = `${this.scrollHeight}px`;
         });
+        window.addEventListener("happykua:user-changed", () => window.location.reload());
     </script>
 </body>
 </html>

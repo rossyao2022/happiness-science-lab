@@ -61,6 +61,7 @@
             <span class="ml-1 text-slate-400 font-light text-sm italic">LAB</span>
         </div>
         <div class="flex items-center gap-6">
+            <div id="accountWidget" data-happykua-account-widget></div>
             <button onclick="toggleLang()" class="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full hover:bg-slate-200 transition">
                 <i class="fas fa-globe text-slate-500"></i>
                 <span id="langBtnText" class="text-sm font-medium">English</span>
@@ -80,6 +81,8 @@
             <span class="lang-en lang-hidden">Based on the <b>KUA (K-Knowledge, U-Union, A-Action)</b> philosophy, transforming happiness from intuition into science.</span>
         </p>
     </header>
+
+    <section class="max-w-6xl mx-auto px-6 pb-10" data-happykua-progress-panel></section>
 
     <!-- 实验模块网格 -->
     <main class="max-w-6xl mx-auto px-6 pb-32">
@@ -200,6 +203,7 @@
         <p class="text-xs mt-2 italic opacity-60">Knowledge • Union • Action</p>
     </footer>
 
+    <script src="auth.js"></script>
     <script>
         let currentLang = 'zh';
         function toggleLang() {

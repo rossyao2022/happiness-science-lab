@@ -1,74 +1,1208 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家庭指南 | Family Guide - HappyKua</title>
+    <title>家庭成长方案生成器 | HappyKua</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Noto+Sans+SC:wght@400;700&display=swap');
-        body { font-family: 'Lexend', 'Noto Sans SC', sans-serif; background: #fffcf5; }
-        .input-group { background: white; border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(255, 146, 43, 0.05); }
-        .lang-hidden { display: none !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+        :root {
+            --paper: #f7f5ef;
+            --ink: #1f2937;
+            --muted: #64748b;
+            --line: #d8dee8;
+            --teal: #0f766e;
+            --teal-soft: #e6f3f1;
+            --amber: #b7791f;
+            --amber-soft: #fff4db;
+            --blue: #2563eb;
+            --blue-soft: #e9efff;
+            --coral: #c2410c;
+            --coral-soft: #fff0e8;
+            --rose: #be123c;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: 'Lexend', 'Noto Sans SC', sans-serif;
+        }
+
+        .tool-panel {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: 0 16px 44px rgba(31, 41, 55, 0.08);
+        }
+
+        .section-rule {
+            border-top: 1px solid var(--line);
+        }
+
+        .field-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .field-control {
+            width: 100%;
+            min-height: 44px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #1e293b;
+            padding: 0.7rem 0.85rem;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        .field-control:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+        }
+
+        .metric-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            border-radius: 999px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            padding: 0.45rem 0.7rem;
+            color: #475569;
+            font-size: 0.8rem;
+            font-weight: 700;
+            max-width: 100%;
+        }
+
+        .report-section {
+            padding: 1.25rem 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .report-section:first-child { border-top: 0; padding-top: 0; }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            font-weight: 900;
+            color: #111827;
+        }
+
+        .section-title i {
+            display: inline-flex;
+            width: 28px;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: var(--teal-soft);
+            color: var(--teal);
+            font-size: 0.8rem;
+        }
+
+        .kua-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.9rem;
+        }
+
+        .kua-box,
+        .day-card,
+        .principle-row {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .kua-box { padding: 1rem; }
+
+        .kua-box h4 {
+            margin-bottom: 0.55rem;
+            font-size: 0.95rem;
+            font-weight: 900;
+        }
+
+        .kua-box ul,
+        .report-list {
+            display: grid;
+            gap: 0.45rem;
+            color: #475569;
+            font-size: 0.92rem;
+            line-height: 1.68;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .kua-box li,
+        .report-list li {
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .kua-box li::before,
+        .report-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.72em;
+            width: 5px;
+            height: 5px;
+            border-radius: 999px;
+            background: var(--teal);
+        }
+
+        .day-card {
+            display: grid;
+            grid-template-columns: 112px 1fr;
+            gap: 0.85rem;
+            padding: 0.9rem;
+        }
+
+        .day-index {
+            display: flex;
+            min-height: 66px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--blue-soft);
+            color: #1d4ed8;
+            font-weight: 900;
+        }
+
+        .day-index span {
+            color: #64748b;
+            font-size: 0.75rem;
+            line-height: 1.35;
+            text-align: center;
+        }
+
+        .principle-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 0.75rem;
+            padding: 0.85rem;
+        }
+
+        .empty-state {
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #64748b;
+            padding: 2rem;
+        }
+
+        .action-button {
+            min-height: 44px;
+            border-radius: 8px;
+            font-weight: 900;
+            transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+        }
+
+        .action-button:hover { transform: translateY(-1px); }
+
+        .action-button:active { transform: translateY(0); }
+
+        .toast {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 60;
+            display: none;
+            max-width: min(360px, calc(100vw - 2rem));
+            border-radius: 8px;
+            background: #111827;
+            color: #fff;
+            padding: 0.85rem 1rem;
+            font-size: 0.9rem;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.24);
+        }
+
+        .toast.is-visible { display: block; }
+
+        @media (max-width: 980px) {
+            .kua-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .day-card,
+            .principle-row {
+                grid-template-columns: 1fr;
+            }
+
+            .empty-state { min-height: 360px; }
+        }
+
+        @media print {
+            body { background: #fff; }
+            nav,
+            .input-column,
+            .report-actions,
+            .toast { display: none !important; }
+            .print-column { width: 100% !important; }
+            .tool-panel { box-shadow: none; border: 0; }
+        }
     </style>
 </head>
 <body>
-    <nav class="p-6 flex justify-between items-center">
-        <a href="/lab" class="text-orange-500 font-bold"><i class="fas fa-chevron-left mr-2"></i>Family Lab</a>
-        <button onclick="toggleLang()" class="text-xs font-bold border-2 border-orange-200 px-4 py-1 rounded-full text-orange-500">
-            <span id="langBtn">English</span>
-        </button>
+    <nav class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+            <a href="/lab" class="inline-flex items-center gap-2 text-sm font-black text-teal-700">
+                <i class="fas fa-chevron-left text-xs"></i>
+                <span>HappyKua Family Lab</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <div data-happykua-account-widget></div>
+                <div class="hidden items-center gap-2 text-xs font-bold text-slate-500 sm:flex">
+                    <span class="metric-chip"><i class="fas fa-seedling text-teal-700"></i>KUA 知联行</span>
+                    <span class="metric-chip"><i class="fas fa-scale-balanced text-amber-700"></i>政策原则</span>
+                    <span class="metric-chip"><i class="fas fa-user-graduate text-blue-700"></i>小学优先</span>
+                </div>
+            </div>
+        </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-6 py-12">
-        <div class="text-center mb-12">
-            <h1 class="text-3xl font-black text-slate-800 mb-4">
-                <span class="lang-zh">定制家庭幸福方案</span>
-                <span class="lang-en lang-hidden">Family Happiness Roadmap</span>
-            </h1>
-            <p class="text-slate-500 text-sm">
-                <span class="lang-zh">输入家庭现状数据，AI 实验室为你生成科学行动指南。</span>
-                <span class="lang-en lang-hidden">Enter family data, let AI generate your bespoke action guide.</span>
-            </p>
-        </div>
+    <main class="mx-auto grid max-w-7xl gap-5 px-4 py-6 sm:px-6 lg:grid-cols-[420px_minmax(0,1fr)]">
+        <aside class="input-column tool-panel self-start">
+            <div class="border-b border-slate-200 p-5">
+                <p class="text-xs font-black uppercase tracking-[0.18em] text-teal-700">Family Growth Generator</p>
+                <h1 class="mt-2 text-2xl font-black tracking-tight text-slate-900">家庭成长方案生成器</h1>
+                <p class="mt-2 text-sm leading-6 text-slate-600">面向小学家长，兼容青春期场景。先本地生成专业指导报告，未来可接入 AI 增强内容。</p>
+            </div>
 
-        <div class="space-y-6">
-            <!-- 数据录入 -->
-            <div class="input-group">
-                <h3 class="font-bold mb-4 text-orange-600"><i class="fas fa-users mr-2"></i>
-                    <span class="lang-zh">家庭成员</span><span class="lang-en lang-hidden">Members</span>
-                </h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">父亲/Dad</button>
-                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">母亲/Mom</button>
-                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">孩子/Kids</button>
-                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">+ Add</button>
+            <form id="familyForm" class="grid gap-5 p-5">
+                <section>
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 class="text-sm font-black text-slate-900">一、孩子阶段</h2>
+                        <span class="text-xs font-bold text-slate-400">必填</span>
+                    </div>
+                    <label class="field-label" for="ageStage"><i class="fas fa-child-reaching text-teal-700"></i>年龄段 / 学段</label>
+                    <select id="ageStage" class="field-control" name="ageStage">
+                        <option value="lowerPrimary">小学低年级（1-3 年级）</option>
+                        <option value="upperPrimary">小学高年级（4-6 年级）</option>
+                        <option value="juniorHigh">初中 / 青春期</option>
+                        <option value="seniorHigh">高中 / 升学压力期</option>
+                    </select>
+                </section>
+
+                <section class="section-rule pt-5">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 class="text-sm font-black text-slate-900">二、家庭画像</h2>
+                        <span class="text-xs font-bold text-slate-400">选择最接近的一项</span>
+                    </div>
+                    <div class="grid gap-4">
+                        <div>
+                            <label class="field-label" for="familyContext"><i class="fas fa-people-roof text-amber-700"></i>家庭情况</label>
+                            <select id="familyContext" class="field-control" name="familyContext">
+                                <option value="twoParents">双亲共同养育</option>
+                                <option value="inconsistentParents">父母教育理念不一致</option>
+                                <option value="grandparent">隔代养育参与较多</option>
+                                <option value="singleParent">单亲家庭</option>
+                                <option value="reconstituted">重组家庭</option>
+                                <option value="multiChild">多孩家庭</option>
+                                <option value="remoteCare">异地陪伴 / 留守照护</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="field-label" for="caregiver"><i class="fas fa-hand-holding-heart text-orange-700"></i>主要照护人</label>
+                            <select id="caregiver" class="field-control" name="caregiver">
+                                <option value="bothParents">父母共同负责</option>
+                                <option value="motherMain">母亲为主</option>
+                                <option value="fatherMain">父亲为主</option>
+                                <option value="grandparentsMain">祖辈为主</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-rule pt-5">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 class="text-sm font-black text-slate-900">三、主要问题</h2>
+                        <span class="text-xs font-bold text-slate-400">先抓主线</span>
+                    </div>
+                    <label class="field-label" for="primaryConcern"><i class="fas fa-compass text-blue-700"></i>当前最需要改善的领域</label>
+                    <select id="primaryConcern" class="field-control" name="primaryConcern">
+                        <option value="learningHabit">学习习惯 / 作业拖拉</option>
+                        <option value="communication">亲子沟通 / 不愿交流</option>
+                        <option value="digitalUse">手机 / 游戏 / 短视频</option>
+                        <option value="emotion">情绪管理 / 易怒焦虑</option>
+                        <option value="peerRelation">同伴关系 / 校园适应</option>
+                        <option value="ruleConflict">规则冲突 / 顶嘴对抗</option>
+                        <option value="selfCare">自理能力 / 劳动习惯</option>
+                        <option value="adolescentBoundary">青春期边界 / 自我认同</option>
+                    </select>
+                </section>
+
+                <section class="section-rule grid gap-4 pt-5">
+                    <div>
+                        <label class="field-label" for="recentEvent"><i class="fas fa-note-sticky text-teal-700"></i>最近发生的一件典型事件</label>
+                        <textarea id="recentEvent" class="field-control min-h-[92px]" name="recentEvent" maxlength="260" placeholder="例如：晚上写作业拖到很晚，提醒几次后孩子发脾气，说不想上学。"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label" for="currentDifficulty"><i class="fas fa-circle-question text-amber-700"></i>家长现在最困扰的点</label>
+                        <textarea id="currentDifficulty" class="field-control min-h-[82px]" name="currentDifficulty" maxlength="220" placeholder="例如：不知道该管严一点，还是先安抚情绪。"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label" for="desiredGoal"><i class="fas fa-bullseye text-blue-700"></i>希望 7 天后看到的变化</label>
+                        <input id="desiredGoal" class="field-control" name="desiredGoal" maxlength="120" placeholder="例如：作业冲突减少，孩子愿意说出真实困难。">
+                    </div>
+                </section>
+
+                <section class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                    <h2 class="mb-3 text-sm font-black text-slate-900">已识别方向</h2>
+                    <div id="profileSummary" class="grid gap-2 text-sm leading-6 text-slate-600"></div>
+                </section>
+
+                <div class="grid gap-3 sm:grid-cols-2">
+                    <button type="button" data-action="generate-family-report" class="action-button bg-teal-700 px-4 py-3 text-white shadow-lg shadow-teal-900/10 sm:col-span-2">
+                        <i class="fas fa-file-circle-check mr-2"></i>生成专业指导报告
+                    </button>
+                    <button type="button" data-action="save-family-report" class="action-button border border-slate-300 bg-white px-4 py-3 text-slate-700">
+                        <i class="fas fa-floppy-disk mr-2"></i>保存
+                    </button>
+                    <button type="button" data-action="reset-family-generator" class="action-button border border-slate-300 bg-white px-4 py-3 text-slate-700">
+                        <i class="fas fa-rotate-left mr-2"></i>重置
+                    </button>
+                </div>
+            </form>
+        </aside>
+
+        <section class="print-column tool-panel min-w-0">
+            <div class="flex flex-col gap-4 border-b border-slate-200 p-5 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Professional Guidance Report</p>
+                    <h2 class="mt-2 text-xl font-black text-slate-900">家庭教育指导报告</h2>
+                </div>
+                <div class="report-actions flex flex-wrap gap-2">
+                    <button type="button" data-action="copy-family-report" class="action-button border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
+                        <i class="fas fa-copy mr-2"></i>复制
+                    </button>
+                    <button type="button" data-action="print-family-report" class="action-button border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
+                        <i class="fas fa-print mr-2"></i>打印
+                    </button>
                 </div>
             </div>
 
-            <div class="input-group">
-                <h3 class="font-bold mb-4 text-orange-600"><i class="fas fa-comment-alt-heart mr-2"></i>
-                    <span class="lang-zh">当前最想解决的问题</span><span class="lang-en lang-hidden">Current Challenge</span>
-                </h3>
-                <textarea class="w-full bg-slate-50 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-orange-200" rows="3" 
-                    placeholder="例如：孩子不爱交流、夫妻缺乏深度沟通..."></textarea>
+            <div id="reportView" class="p-5">
+                <div class="empty-state">
+                    <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-teal-50 text-2xl text-teal-700">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-slate-900">等待生成家庭成长方案</h3>
+                    <p class="mt-2 max-w-md text-sm leading-6">填写左侧信息后，系统会基于 KUA 框架和家庭教育政策原则，生成一份专业型家庭教育指导报告。</p>
+                </div>
             </div>
-
-            <button class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-orange-200 hover:scale-[1.02] transition">
-                <span class="lang-zh">生成家庭实验室报告</span><span class="lang-en lang-hidden">Generate Family Report</span>
-            </button>
-        </div>
+        </section>
     </main>
 
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="auth.js"></script>
     <script>
-        let currentLang = 'zh';
-        function toggleLang() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
-            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
-            document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
+        window.HAPPYKUA_AI_ENABLED = false;
+
+        const FAMILY_STORAGE_KEY = "happykua-family-growth-report";
+
+        const ageStageGuides = {
+            lowerPrimary: {
+                label: "小学低年级（1-3 年级）",
+                focus: "习惯建立、规则感、情绪表达与安全依恋",
+                insight: [
+                    "这个阶段的孩子更依赖可见规则、稳定节奏和即时反馈，抽象说教效果有限。",
+                    "学习习惯的核心不是单次作业完成，而是固定流程、低阻力开始和完成后的积极确认。",
+                    "孩子出现拖延、顶嘴或哭闹时，常常是在表达能力不足、任务难度过高或情绪调节资源不足。"
+                ],
+                parentRole: "家长需要做规则示范者和情绪容器，用简短、具体、稳定的方式建立秩序。",
+                tone: "少解释大道理，多用可执行的小步骤。"
+            },
+            upperPrimary: {
+                label: "小学高年级（4-6 年级）",
+                focus: "自主学习、同伴关系、电子产品边界与挫折耐受",
+                insight: [
+                    "孩子开始追求自主感和被尊重感，过度控制会让学习问题升级成关系对抗。",
+                    "高年级问题常同时包含学业压力、同伴比较、数字娱乐和亲子沟通方式变化。",
+                    "规则仍然必要，但需要从单向命令转为共同约定、过程监督和复盘。"
+                ],
+                parentRole: "家长需要做边界共建者，帮助孩子从被动服从过渡到参与规则、承担结果。",
+                tone: "把要求转成约定，把批评转成复盘。"
+            },
+            juniorHigh: {
+                label: "初中 / 青春期",
+                focus: "边界感、自我认同、亲子冲突、手机社交与学业压力",
+                insight: [
+                    "青春期孩子更在意自主、隐私和同伴评价，强压式管控容易触发防御。",
+                    "表面的对抗背后，可能有压力、羞耻感、无力感或对尊重的需要。",
+                    "家长的首要任务是守住安全底线，同时把沟通从审问转为协商。"
+                ],
+                parentRole: "家长需要做稳定的支持者和边界维护者，在尊重中保留必要规则。",
+                tone: "先连接，再讨论边界；先理解，再谈责任。"
+            },
+            seniorHigh: {
+                label: "高中 / 升学压力期",
+                focus: "压力支持、目标感、信任关系和心理稳定",
+                insight: [
+                    "高中阶段的家庭教育重点从管理行为转向支持压力、保持信任和协助规划。",
+                    "频繁比较、追问成绩或否定努力，会降低孩子求助意愿。",
+                    "家长应减少临场指挥，增加情绪稳定、资源支持和必要时的专业求助。"
+                ],
+                parentRole: "家长需要做压力缓冲者和资源协调者，帮助孩子维持可持续的学习状态。",
+                tone: "少评价，多支持；少追问，多共情。"
+            }
+        };
+
+        const familyContextGuides = {
+            twoParents: {
+                label: "双亲共同养育",
+                risk: "若父母分工不清，容易出现一方管教、一方旁观的失衡。",
+                coordination: [
+                    "父母先在孩子不在场时统一本周只处理一个核心目标。",
+                    "明确一位主要执行人和一位支持人，避免同一件事被重复批评。",
+                    "每天用 5 分钟同步孩子状态，不在情绪高点临时升级规则。"
+                ]
+            },
+            inconsistentParents: {
+                label: "父母教育理念不一致",
+                risk: "孩子会在不同规则之间摇摆，问题也容易被转化为夫妻冲突。",
+                coordination: [
+                    "先暂停互相指责，把分歧写成两个具体选项，再讨论共同底线。",
+                    "对孩子只发布一个家庭版本的规则，父母私下再复盘执行效果。",
+                    "允许方法不同，但奖惩、电子产品、作息等底线必须一致。"
+                ]
+            },
+            grandparent: {
+                label: "隔代养育参与较多",
+                risk: "祖辈的照顾优势很重要，但规则不一致会削弱孩子的边界感。",
+                coordination: [
+                    "感谢祖辈照护价值，再提出 1-2 条最关键的共同规则。",
+                    "把规则写成家里所有照护人都能执行的短句，减少临场争辩。",
+                    "父母承担教育主责，祖辈承担陪伴支持，分工要被孩子清楚看见。"
+                ]
+            },
+            singleParent: {
+                label: "单亲家庭",
+                risk: "家长可能同时承担陪伴、规则、经济和情绪压力，容易过度疲惫。",
+                coordination: [
+                    "优先建立稳定作息和高质量短陪伴，不追求事事完美。",
+                    "为孩子保留稳定、可信任的成人支持网络，如亲友、老师或社工资源。",
+                    "避免把成人关系压力转移给孩子，也不让孩子承担伴侣式安慰角色。"
+                ]
+            },
+            reconstituted: {
+                label: "重组家庭",
+                risk: "亲密关系和管教权威需要时间建立，过快要求认同会造成抵触。",
+                coordination: [
+                    "继父母或新家庭成员先以支持和陪伴建立信任，再逐步参与规则执行。",
+                    "亲生父母承担主要管教沟通，避免让孩子把规则理解为新成员控制。",
+                    "保留孩子表达复杂感受的空间，不把接纳速度作为评价孩子的标准。"
+                ]
+            },
+            multiChild: {
+                label: "多孩家庭",
+                risk: "手足冲突常与公平感、关注分配和角色标签有关。",
+                coordination: [
+                    "减少给孩子贴懂事、调皮、让着弟妹等固定标签。",
+                    "每个孩子每周至少有一次单独陪伴时间，哪怕只有 15 分钟。",
+                    "冲突处理先分开降温，再让双方描述事实、感受和修复行动。"
+                ]
+            },
+            remoteCare: {
+                label: "异地陪伴 / 留守照护",
+                risk: "陪伴不足时，孩子更需要可预测的连接，而不是临时性的高强度补偿。",
+                coordination: [
+                    "固定每周 2-3 次短视频或语音时间，稳定比时长更重要。",
+                    "远方父母负责情感连接和关键决策，身边照护人负责日常执行。",
+                    "家校沟通要有一个稳定联系人，避免信息断裂。"
+                ]
+            }
+        };
+
+        const caregiverGuides = {
+            bothParents: "父母共同负责时，重点是统一目标、减少重复批评，并让孩子看到父母彼此支持。",
+            motherMain: "母亲为主时，要避免长期单人承担导致疲惫，建议把父亲或其他照护者纳入一个具体任务。",
+            fatherMain: "父亲为主时，要兼顾规则和情感表达，避免只负责纠错、缺少日常连接。",
+            grandparentsMain: "祖辈为主时，父母仍需承担教育主责，通过固定沟通和共同规则保持一致。"
+        };
+
+        const concernGuides = {
+            learningHabit: {
+                label: "学习习惯 / 作业拖拉",
+                pattern: "表面是拖拉，背后常见原因包括任务启动困难、畏难、缺少时间感、家长提醒方式引发对抗。",
+                knowledge: [
+                    "先区分不会做、不想做、太累了和想逃避被评价，这四类原因需要不同处理。",
+                    "对小学阶段，固定流程比反复催促更有效，环境提示比情绪施压更稳定。"
+                ],
+                union: [
+                    "家长与老师沟通作业量、完成质量和孩子卡点，不只询问成绩。",
+                    "家庭内部约定固定作业开始时间和求助方式，减少每天重新谈判。"
+                ],
+                action: [
+                    "把作业切成 15-25 分钟小段，每段只定义一个完成标准。",
+                    "用开始仪式降低阻力，例如喝水、整理桌面、打开第一项任务。"
+                ],
+                firstDay: "共同画出放学后到睡前的时间线，只调整一个最卡的节点。",
+                risk: "如果持续拒学、明显躯体不适或对学习出现强烈恐惧，需要联系班主任和心理老师进一步评估。"
+            },
+            communication: {
+                label: "亲子沟通 / 不愿交流",
+                pattern: "孩子沉默或敷衍，常与被评价、被追问、表达后没有被接住有关。",
+                knowledge: [
+                    "沟通不是让孩子立刻说出全部，而是重建表达后不会被否定的安全感。",
+                    "问题越严重，越需要先减少审问式开场。"
+                ],
+                union: [
+                    "父母统一减少翻旧账和贴标签，约定每天只做一次低压力交流。",
+                    "需要时通过老师了解学校状态，但避免把老师信息变成回家审问材料。"
+                ],
+                action: [
+                    "每天安排 10 分钟不纠错时间，只听一件事，不马上给建议。",
+                    "把你怎么又这样改成我想了解刚才发生了什么。"
+                ],
+                firstDay: "晚饭后只问一个开放问题：今天有没有一件让你有点费劲的事。",
+                risk: "如果孩子长期封闭、情绪低落、回避上学或出现自伤表达，要及时寻求学校心理老师或专业机构帮助。"
+            },
+            digitalUse: {
+                label: "手机 / 游戏 / 短视频",
+                pattern: "电子产品冲突通常不是单一自控问题，还涉及替代活动不足、同伴社交、压力逃避和规则不稳定。",
+                knowledge: [
+                    "直接没收可能短期有效，但容易让问题转向隐瞒和对抗。",
+                    "数字边界应同时包含使用时段、内容、地点、结束方式和违规后的自然后果。"
+                ],
+                union: [
+                    "父母先统一自己能否以身作则，避免边看手机边要求孩子放下手机。",
+                    "与孩子共同制定规则，并让学校作息、作业需求和家庭娱乐安排相匹配。"
+                ],
+                action: [
+                    "设定家庭公共充电区，睡前 60 分钟设备离开卧室。",
+                    "给出替代活动清单，而不是只提出禁止。"
+                ],
+                firstDay: "召开 15 分钟家庭规则会议，只确定睡前设备放置和周内使用时段。",
+                risk: "如果出现昼夜颠倒、明显退缩、欺骗盗刷或无法停止，需要家校协同并寻求专业评估。"
+            },
+            emotion: {
+                label: "情绪管理 / 易怒焦虑",
+                pattern: "情绪爆发是信号，不等于孩子故意挑战家长权威。",
+                knowledge: [
+                    "小学孩子需要外部调节支持，青春期孩子需要被尊重的空间和情绪命名能力。",
+                    "先处理情绪强度，再讨论责任和规则。"
+                ],
+                union: [
+                    "家庭成员统一使用暂停、降温、复盘三步，避免多人同时说教。",
+                    "必要时与老师确认学校压力、人际关系和睡眠状态。"
+                ],
+                action: [
+                    "建立冷静角或冷静流程，不把冷静当惩罚。",
+                    "复盘时问发生了什么、身体有什么感觉、下次需要什么帮助。"
+                ],
+                firstDay: "和孩子共同选一个冷静信号，约定情绪升高时先暂停 5 分钟。",
+                risk: "若出现持续失眠、惊恐、自伤言语、攻击行为或明显功能下降，应尽快寻求专业支持。"
+            },
+            peerRelation: {
+                label: "同伴关系 / 校园适应",
+                pattern: "同伴问题常影响学习、情绪和自我评价，家长需要先了解事实，再判断是否介入。",
+                knowledge: [
+                    "孩子讲同伴冲突时，家长过快评价谁对谁错，会降低孩子继续表达的意愿。",
+                    "需要区分普通摩擦、排斥孤立和校园欺凌。"
+                ],
+                union: [
+                    "与班主任沟通事实、频率和影响，避免只听单方片段就升级冲突。",
+                    "家庭支持孩子练习表达边界、寻求帮助和恢复自我价值感。"
+                ],
+                action: [
+                    "用事实、感受、请求三句话练习表达边界。",
+                    "帮助孩子列出两个可信任的校内求助对象。"
+                ],
+                firstDay: "让孩子画出班级关系地图，标出安心的人、紧张的人和可求助的人。",
+                risk: "如果涉及持续辱骂、孤立、肢体伤害、网络传播或恐惧上学，应及时联系学校并保留证据。"
+            },
+            ruleConflict: {
+                label: "规则冲突 / 顶嘴对抗",
+                pattern: "规则冲突常由规则过多、边界不清、执行不一致或孩子自主需求增强引发。",
+                knowledge: [
+                    "顶嘴不一定是不尊重，可能是在争取解释权或表达被控制感。",
+                    "规则越多越难执行，第一阶段只抓安全、作息、学习和电子产品中的一个重点。"
+                ],
+                union: [
+                    "照护人必须使用同一条规则和同一种后果，不临时加码。",
+                    "规则讨论放在情绪平稳时，不在冲突现场反复讲道理。"
+                ],
+                action: [
+                    "把规则写成可观察行为，例如 21:30 前完成洗漱，而不是要自觉。",
+                    "违规后执行提前约定的自然后果，减少羞辱和威胁。"
+                ],
+                firstDay: "删减规则，只保留本周最重要的一条，并写清楚开始时间、完成标准和后果。",
+                risk: "如果冲突升级到持续辱骂、威胁、体罚或离家出走风险，需要先做安全降级并寻求外部支持。"
+            },
+            selfCare: {
+                label: "自理能力 / 劳动习惯",
+                pattern: "自理能力不足往往来自替代过多、练习机会不足或标准过高。",
+                knowledge: [
+                    "生活技能是家庭教育的重要组成部分，不能只让学习挤占全部成长空间。",
+                    "孩子做得慢、做得不完美，是能力形成过程的一部分。"
+                ],
+                union: [
+                    "家庭成员统一不包办同一项任务，让孩子有稳定练习机会。",
+                    "根据年龄选择固定家务，不把家务当临时惩罚。"
+                ],
+                action: [
+                    "选择一项每天可完成的小任务，如整理书包、摆碗筷、收衣物。",
+                    "先示范，再陪做，再放手，逐步降低成人参与。"
+                ],
+                firstDay: "和孩子共同选择一项本周负责的家庭任务，并确定完成标准。",
+                risk: "如果孩子因精细动作、注意力或发展问题长期无法完成基本自理，可咨询学校或专业人员。"
+            },
+            adolescentBoundary: {
+                label: "青春期边界 / 自我认同",
+                pattern: "青春期冲突常围绕隐私、朋友、穿着、学习安排和手机社交展开。",
+                knowledge: [
+                    "孩子需要更大的自主空间，但仍需要安全底线和稳定支持。",
+                    "尊重隐私不等于放弃边界，边界需要通过协商和信任来维护。"
+                ],
+                union: [
+                    "父母先明确哪些是安全底线，哪些可以交给孩子参与决策。",
+                    "需要与学校保持信息通道，但避免把学校反馈变成家庭审讯。"
+                ],
+                action: [
+                    "把可协商事项和不可协商底线分开写下。",
+                    "每周一次家庭短会，只讨论一个边界议题。"
+                ],
+                firstDay: "和孩子一起列出三件可以自主决定的事，以及三条家庭安全底线。",
+                risk: "如果出现自伤、严重逃学、极端情绪或危险社交，应尽快联动学校和专业资源。"
+            }
+        };
+
+        const policyPrincipleGuides = [
+            {
+                title: "父母或监护人的主体责任",
+                source: "《家庭教育促进法》原则",
+                guidance: "家庭教育首先发生在日常生活中，家长需要承担稳定陪伴、行为示范和规则建设责任。"
+            },
+            {
+                title: "尊重未成年人身心发展规律",
+                source: "家庭教育政策原则",
+                guidance: "不同年龄段的孩子需要不同沟通方式，不能用单一的命令、比较或惩罚替代发展支持。"
+            },
+            {
+                title: "保护人格尊严与隐私",
+                source: "未成年人保护与家庭教育原则",
+                guidance: "指导孩子时应避免羞辱、贴标签、公开比较和侵犯隐私，尤其在青春期更要保留尊重感。"
+            },
+            {
+                title: "家校社协同育人",
+                source: "家庭教育指导服务方向",
+                guidance: "家庭、学校和社会资源应形成支持网络，家长遇到持续困难时应主动与学校和专业人员协同。"
+            },
+            {
+                title: "立德树人与全面发展",
+                source: "家庭教育促进方向",
+                guidance: "家庭教育不仅处理成绩，也关注道德品质、身体素质、生活技能、文化修养、行为习惯和心理健康。"
+            }
+        ];
+
+        const followUpPrompts = [
+            "如果孩子完全不配合，第一步应该怎么降级？",
+            "父母意见不一致时，如何先达成一个最低共识？",
+            "能否把 7 天方案改成家庭会议模板？",
+            "如何和班主任沟通这件事才不伤害孩子？"
+        ];
+
+        let latestReport = null;
+        let toastTimer = null;
+
+        function getSelectLabel(id) {
+            const select = document.getElementById(id);
+            return select.options[select.selectedIndex].textContent.trim();
         }
+
+        function collectFamilyProfile() {
+            return {
+                ageStage: document.getElementById("ageStage").value,
+                ageStageLabel: getSelectLabel("ageStage"),
+                familyContext: document.getElementById("familyContext").value,
+                familyContextLabel: getSelectLabel("familyContext"),
+                caregiver: document.getElementById("caregiver").value,
+                caregiverLabel: getSelectLabel("caregiver"),
+                primaryConcern: document.getElementById("primaryConcern").value,
+                primaryConcernLabel: getSelectLabel("primaryConcern"),
+                recentEvent: document.getElementById("recentEvent").value.trim(),
+                currentDifficulty: document.getElementById("currentDifficulty").value.trim(),
+                desiredGoal: document.getElementById("desiredGoal").value.trim()
+            };
+        }
+
+        async function generateFamilyReport(formData) {
+            if (window.HAPPYKUA_AI_ENABLED) {
+                return await generateWithAI(formData);
+            }
+            return generateWithLocalRules(formData);
+        }
+
+        async function generateWithAI(formData) {
+            if (typeof window.generateFamilyReportWithAI === "function") {
+                return await window.generateFamilyReportWithAI(formData);
+            }
+            return generateWithLocalRules(formData);
+        }
+
+        function generateWithLocalRules(formData) {
+            const stageGuide = ageStageGuides[formData.ageStage];
+            const familyGuide = familyContextGuides[formData.familyContext];
+            const concernGuide = concernGuides[formData.primaryConcern];
+            const caregiverGuide = caregiverGuides[formData.caregiver];
+            const eventText = formData.recentEvent || "家长暂未补充具体事件，建议后续用一次近期冲突或困扰作为复盘样本。";
+            const difficultyText = formData.currentDifficulty || "当前困扰尚未具体化，建议先观察冲突发生的时间、地点、触发点和成人回应方式。";
+            const goalText = formData.desiredGoal || "7 天内先观察冲突频率下降、孩子表达增加、家庭规则更稳定这三类变化。";
+
+            return {
+                title: `${stageGuide.label} · ${concernGuide.label}家庭成长方案`,
+                generatedAt: new Date().toLocaleString("zh-CN", { hour12: false }),
+                profile: formData,
+                summary: [
+                    `当前家庭画像为“${formData.familyContextLabel}”，主要照护模式为“${formData.caregiverLabel}”。`,
+                    `主要议题聚焦在“${concernGuide.label}”，需要同时处理孩子发展需求、家庭互动方式和可执行规则。`,
+                    `近期典型事件：${eventText}`,
+                    `家长期待目标：${goalText}`
+                ],
+                stageInsight: {
+                    title: stageGuide.label,
+                    focus: stageGuide.focus,
+                    parentRole: stageGuide.parentRole,
+                    tone: stageGuide.tone,
+                    points: stageGuide.insight
+                },
+                kua: {
+                    knowledge: [
+                        concernGuide.pattern,
+                        ...concernGuide.knowledge,
+                        `结合${stageGuide.label}特点，建议把问题理解为发展任务与家庭互动共同作用，而不是单纯归因为孩子不听话。`
+                    ],
+                    union: [
+                        caregiverGuide,
+                        familyGuide.risk,
+                        ...familyGuide.coordination,
+                        ...concernGuide.union
+                    ],
+                    action: [
+                        concernGuide.firstDay,
+                        ...concernGuide.action,
+                        "每天结束时只复盘一个观察点：冲突是否减少、表达是否增加、规则是否更稳定。"
+                    ]
+                },
+                policyPrinciples: selectPolicyPrinciples(formData),
+                coordination: buildCoordinationRecommendations(formData, familyGuide, caregiverGuide),
+                actionPlan: buildSevenDayPlan(formData, stageGuide, familyGuide, concernGuide),
+                riskReminders: buildRiskReminders(concernGuide),
+                followUpPrompts
+            };
+        }
+
+        function selectPolicyPrinciples(formData) {
+            const principles = [...policyPrincipleGuides];
+            if (formData.primaryConcern === "selfCare") {
+                return [principles[0], principles[4], principles[1], principles[3]];
+            }
+            if (formData.primaryConcern === "adolescentBoundary" || formData.ageStage === "juniorHigh" || formData.ageStage === "seniorHigh") {
+                return [principles[1], principles[2], principles[3], principles[0]];
+            }
+            if (formData.primaryConcern === "peerRelation" || formData.primaryConcern === "emotion") {
+                return [principles[1], principles[3], principles[2], principles[0]];
+            }
+            return [principles[0], principles[1], principles[3], principles[4]];
+        }
+
+        function buildCoordinationRecommendations(formData, familyGuide, caregiverGuide) {
+            return [
+                `家庭主线：${familyGuide.label}场景下，先统一成人回应方式，再要求孩子改变。`,
+                `照护分工：${caregiverGuide}`,
+                "家校协作：与老师沟通时聚焦事实、频率、影响和支持需求，避免只问成绩或只追责。",
+                "家庭会议：每周固定一次 15 分钟短会，只讨论一个主题、一个规则和一个下周观察点。"
+            ];
+        }
+
+        function buildSevenDayPlan(formData, stageGuide, familyGuide, concernGuide) {
+            return [
+                {
+                    day: "Day 1",
+                    theme: "建立共同问题定义",
+                    action: concernGuide.firstDay,
+                    observe: "记录孩子反应和成人情绪，不在当天追加更多要求。"
+                },
+                {
+                    day: "Day 2",
+                    theme: "降低启动阻力",
+                    action: `按照“${stageGuide.tone}”的原则，把任务改成一个 15 分钟内能完成的小动作。`,
+                    observe: "观察孩子是否更容易开始，而不只看最终结果。"
+                },
+                {
+                    day: "Day 3",
+                    theme: "统一照护人规则",
+                    action: familyGuide.coordination[0],
+                    observe: "检查成人是否使用同一套说法，避免孩子被多头指挥。"
+                },
+                {
+                    day: "Day 4",
+                    theme: "练习一次低冲突沟通",
+                    action: "选择情绪平稳的时间，用事实、感受、请求三步说清一个期待。",
+                    observe: "孩子是否愿意多说一句，或冲突强度是否下降。"
+                },
+                {
+                    day: "Day 5",
+                    theme: "引入家校或外部支持",
+                    action: "如问题涉及学习、同伴或情绪，向老师询问一个事实性观察和一个可配合的支持点。",
+                    observe: "确认学校信息是否补充了家庭看不到的部分。"
+                },
+                {
+                    day: "Day 6",
+                    theme: "给孩子参与感",
+                    action: "让孩子从两个可接受选项中选择执行方式，保留家庭底线。",
+                    observe: "孩子对规则的抵触是否降低，是否出现更多主动表达。"
+                },
+                {
+                    day: "Day 7",
+                    theme: "复盘并保留有效做法",
+                    action: `围绕“${formData.desiredGoal || "冲突减少、表达增加、规则稳定"}”复盘一项有效变化和一项需要调整的做法。`,
+                    observe: "决定下周继续保留的一条规则，不扩大到太多目标。"
+                }
+            ];
+        }
+
+        function buildRiskReminders(concernGuide) {
+            return [
+                concernGuide.risk,
+                "如出现持续两周以上的明显情绪低落、睡眠紊乱、拒学、攻击或自伤表达，应优先寻求学校心理老师、儿童青少年心理专业人员或医疗机构支持。",
+                "家庭内应避免体罚、羞辱、威胁、翻旧账和公开比较；这些方式会削弱信任，也可能让问题升级。",
+                "本报告用于家庭教育指导和行动规划，不替代医学诊断、心理治疗、法律意见或学校正式干预。"
+            ];
+        }
+
+        function renderFamilyReport(report) {
+            latestReport = report;
+            const reportView = document.getElementById("reportView");
+            reportView.innerHTML = `
+                <article class="grid gap-1">
+                    <div class="mb-4">
+                        <div class="mb-3 flex flex-wrap gap-2">
+                            <span class="metric-chip"><i class="fas fa-calendar-check text-teal-700"></i>${escapeHtml(report.generatedAt)}</span>
+                            <span class="metric-chip"><i class="fas fa-child text-blue-700"></i>${escapeHtml(report.profile.ageStageLabel)}</span>
+                            <span class="metric-chip"><i class="fas fa-compass text-amber-700"></i>${escapeHtml(report.profile.primaryConcernLabel)}</span>
+                        </div>
+                        <h3 class="text-2xl font-black tracking-tight text-slate-950">${escapeHtml(report.title)}</h3>
+                        <p class="mt-2 text-sm leading-6 text-slate-600">这是一份基于本地规则生成的专业型家庭教育指导报告。未来接入 AI 后，将沿用同一份家庭画像与报告结构。</p>
+                    </div>
+
+                    <section class="report-section">
+                        <h3 class="section-title"><i class="fas fa-magnifying-glass-chart"></i>一、问题初步判断</h3>
+                        ${renderList(report.summary)}
+                    </section>
+
+                    <section class="report-section">
+                        <h3 class="section-title"><i class="fas fa-user-clock"></i>二、年龄阶段发展特点</h3>
+                        <div class="grid gap-3 text-sm leading-7 text-slate-600">
+                            <p><strong class="text-slate-900">阶段重点：</strong>${escapeHtml(report.stageInsight.focus)}</p>
+                            <p><strong class="text-slate-900">家长角色：</strong>${escapeHtml(report.stageInsight.parentRole)}</p>
+                            ${renderList(report.stageInsight.points)}
+                        </div>
+                    </section>
+
+                    <section class="report-section">
+                        <h3 class="section-title"><i class="fas fa-diagram-project"></i>三、KUA 分析</h3>
+                        <div class="kua-grid">
+                            <div id="kuaKnowledge" class="kua-box">
+                                <h4 class="text-teal-800">知 Knowledge</h4>
+                                ${renderList(report.kua.knowledge)}
+                            </div>
+                            <div id="kuaUnion" class="kua-box">
+                                <h4 class="text-blue-800">联 Union</h4>
+                                ${renderList(report.kua.union)}
+                            </div>
+                            <div id="kuaAction" class="kua-box">
+                                <h4 class="text-amber-800">行 Action</h4>
+                                ${renderList(report.kua.action)}
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="policyPrinciples" class="report-section">
+                        <h3 class="section-title"><i class="fas fa-scale-balanced"></i>四、政策与家庭教育原则</h3>
+                        <div class="grid gap-3">
+                            ${report.policyPrinciples.map(item => `
+                                <div class="principle-row">
+                                    <div>
+                                        <p class="text-sm font-black text-slate-900">${escapeHtml(item.title)}</p>
+                                        <p class="mt-1 text-xs font-bold text-slate-400">${escapeHtml(item.source)}</p>
+                                    </div>
+                                    <p class="text-sm leading-6 text-slate-600">${escapeHtml(item.guidance)}</p>
+                                </div>
+                            `).join("")}
+                        </div>
+                        <div class="mt-4 grid gap-2 text-xs leading-6 text-slate-500 sm:grid-cols-2">
+                            <a class="font-bold text-teal-700 underline-offset-4 hover:underline" href="https://www.moe.gov.cn/jyb_sjzl/sjzl_zcfg/zcfg_qtxgfl/202110/t20211025_574749.html" target="_blank" rel="noreferrer">家庭教育促进法相关资料</a>
+                            <a class="font-bold text-teal-700 underline-offset-4 hover:underline" href="https://www.moe.gov.cn/jyb_xwfb/s5147/202204/t20220413_616321.html" target="_blank" rel="noreferrer">家庭教育指导五年规划相关资料</a>
+                        </div>
+                    </section>
+
+                    <section class="report-section">
+                        <h3 class="section-title"><i class="fas fa-people-arrows"></i>五、家庭协同建议</h3>
+                        ${renderList(report.coordination)}
+                    </section>
+
+                    <section id="actionPlan" class="report-section">
+                        <h3 class="section-title"><i class="fas fa-list-check"></i>六、7 天行动方案</h3>
+                        <div class="grid gap-3">
+                            ${report.actionPlan.map(item => `
+                                <div class="day-card">
+                                    <div class="day-index">${escapeHtml(item.day)}<span>${escapeHtml(item.theme)}</span></div>
+                                    <div>
+                                        <p class="text-sm font-black text-slate-900">行动：${escapeHtml(item.action)}</p>
+                                        <p class="mt-2 text-sm leading-6 text-slate-600">观察：${escapeHtml(item.observe)}</p>
+                                    </div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    </section>
+
+                    <section id="riskReminders" class="report-section">
+                        <h3 class="section-title"><i class="fas fa-triangle-exclamation"></i>七、风险提醒与进一步求助</h3>
+                        ${renderList(report.riskReminders)}
+                    </section>
+
+                    <section class="report-section">
+                        <h3 class="section-title"><i class="fas fa-comments"></i>可继续追问的方向</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${report.followUpPrompts.map(prompt => `<span class="metric-chip">${escapeHtml(prompt)}</span>`).join("")}
+                        </div>
+                    </section>
+                </article>
+            `;
+        }
+
+        function renderList(items) {
+            return `<ul class="report-list">${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+        }
+
+        function buildFamilyStoragePayload() {
+            return {
+                profile: collectFamilyProfile(),
+                report: latestReport,
+                savedAt: new Date().toISOString()
+            };
+        }
+
+        function syncFamilyModule(payload) {
+            const auth = window.HappyKuaAuth;
+            if (!auth) return;
+            auth.setModuleData("family", {
+                profile: payload.profile,
+                report: payload.report,
+                savedAt: payload.savedAt,
+                progress: {
+                    completed: Boolean(payload.report),
+                    count: payload.report ? 1 : 0,
+                    lastActivityAt: payload.savedAt
+                }
+            });
+        }
+
+        function saveFamilyReport() {
+            const payload = buildFamilyStoragePayload();
+            syncFamilyModule(payload);
+            const auth = window.HappyKuaAuth;
+            if (!auth || auth.getCurrentUser().isGuest) {
+                localStorage.setItem(FAMILY_STORAGE_KEY, JSON.stringify(payload));
+            }
+            showToast("家庭方案已保存到本地浏览器。");
+        }
+
+        async function copyFamilyReport() {
+            if (!latestReport) {
+                showToast("请先生成报告，再复制。");
+                return;
+            }
+            const text = buildReportText(latestReport);
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast("报告内容已复制。");
+            } catch (error) {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                textArea.remove();
+                showToast("报告内容已复制。");
+            }
+        }
+
+        function resetFamilyGenerator() {
+            const auth = window.HappyKuaAuth;
+            if (auth) auth.clearModuleData("family");
+            document.getElementById("familyForm").reset();
+            latestReport = null;
+            if (!auth || auth.getCurrentUser().isGuest) {
+                localStorage.removeItem(FAMILY_STORAGE_KEY);
+            }
+            updateProfileSummary();
+            document.getElementById("reportView").innerHTML = `
+                <div class="empty-state">
+                    <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-teal-50 text-2xl text-teal-700">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-slate-900">等待生成家庭成长方案</h3>
+                    <p class="mt-2 max-w-md text-sm leading-6">填写左侧信息后，系统会基于 KUA 框架和家庭教育政策原则，生成一份专业型家庭教育指导报告。</p>
+                </div>
+            `;
+            showToast("已重置家庭方案生成器。");
+        }
+
+        function buildReportText(report) {
+            const lines = [
+                report.title,
+                `生成时间：${report.generatedAt}`,
+                "",
+                "一、问题初步判断",
+                ...report.summary.map(item => `- ${item}`),
+                "",
+                "二、年龄阶段发展特点",
+                `- 阶段重点：${report.stageInsight.focus}`,
+                `- 家长角色：${report.stageInsight.parentRole}`,
+                ...report.stageInsight.points.map(item => `- ${item}`),
+                "",
+                "三、KUA 分析",
+                "知 Knowledge",
+                ...report.kua.knowledge.map(item => `- ${item}`),
+                "联 Union",
+                ...report.kua.union.map(item => `- ${item}`),
+                "行 Action",
+                ...report.kua.action.map(item => `- ${item}`),
+                "",
+                "四、政策与家庭教育原则",
+                ...report.policyPrinciples.map(item => `- ${item.title}：${item.guidance}`),
+                "",
+                "五、家庭协同建议",
+                ...report.coordination.map(item => `- ${item}`),
+                "",
+                "六、7 天行动方案",
+                ...report.actionPlan.map(item => `- ${item.day} ${item.theme}：${item.action}；观察：${item.observe}`),
+                "",
+                "七、风险提醒与进一步求助",
+                ...report.riskReminders.map(item => `- ${item}`)
+            ];
+            return lines.join("\n");
+        }
+
+        function updateProfileSummary() {
+            const profile = collectFamilyProfile();
+            const summary = document.getElementById("profileSummary");
+            summary.innerHTML = `
+                <p><strong class="text-slate-900">孩子阶段：</strong>${escapeHtml(profile.ageStageLabel)}</p>
+                <p><strong class="text-slate-900">家庭画像：</strong>${escapeHtml(profile.familyContextLabel)}，${escapeHtml(profile.caregiverLabel)}</p>
+                <p><strong class="text-slate-900">主要议题：</strong>${escapeHtml(profile.primaryConcernLabel)}</p>
+                <p><strong class="text-slate-900">报告倾向：</strong>${escapeHtml(ageStageGuides[profile.ageStage].focus)} · ${escapeHtml(concernGuides[profile.primaryConcern].label)}</p>
+            `;
+        }
+
+        function restoreSavedReport() {
+            const auth = window.HappyKuaAuth;
+            const moduleData = auth?.getModuleData("family") || {};
+            if (moduleData.profile || moduleData.report) {
+                if (moduleData.profile) {
+                    for (const [key, value] of Object.entries(moduleData.profile)) {
+                        const input = document.getElementById(key);
+                        if (input && typeof value === "string") {
+                            input.value = value;
+                        }
+                    }
+                }
+                updateProfileSummary();
+                if (moduleData.report) {
+                    renderFamilyReport(moduleData.report);
+                }
+                return;
+            }
+
+            if (auth && !auth.getCurrentUser().isGuest) return;
+
+            const raw = localStorage.getItem(FAMILY_STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const payload = JSON.parse(raw);
+                if (payload.profile) {
+                    for (const [key, value] of Object.entries(payload.profile)) {
+                        const input = document.getElementById(key);
+                        if (input && typeof value === "string") {
+                            input.value = value;
+                        }
+                    }
+                }
+                updateProfileSummary();
+                if (payload.report) {
+                    renderFamilyReport(payload.report);
+                }
+                syncFamilyModule(payload);
+            } catch (error) {
+                localStorage.removeItem(FAMILY_STORAGE_KEY);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("is-visible");
+            window.clearTimeout(toastTimer);
+            toastTimer = window.setTimeout(() => {
+                toast.classList.remove("is-visible");
+            }, 2400);
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        async function handleGenerateReport() {
+            const profile = collectFamilyProfile();
+            const report = await generateFamilyReport(profile);
+            renderFamilyReport(report);
+            saveFamilyReport();
+            showToast("专业指导报告已生成。");
+        }
+
+        document.querySelector('[data-action="generate-family-report"]').addEventListener("click", handleGenerateReport);
+        document.querySelector('[data-action="save-family-report"]').addEventListener("click", saveFamilyReport);
+        document.querySelector('[data-action="reset-family-generator"]').addEventListener("click", resetFamilyGenerator);
+        document.querySelector('[data-action="copy-family-report"]').addEventListener("click", copyFamilyReport);
+        document.querySelector('[data-action="print-family-report"]').addEventListener("click", () => window.print());
+        document.querySelectorAll("#familyForm select, #familyForm textarea, #familyForm input").forEach(input => {
+            input.addEventListener("input", updateProfileSummary);
+            input.addEventListener("change", updateProfileSummary);
+        });
+        window.addEventListener("happykua:user-changed", () => window.location.reload());
+
+        updateProfileSummary();
+        restoreSavedReport();
     </script>
 </body>
 </html>
