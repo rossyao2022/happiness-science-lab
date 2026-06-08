@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家庭指南 | Family Guide - HappyKua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Noto+Sans+SC:wght@400;700&display=swap');
+        body { font-family: 'Lexend', 'Noto Sans SC', sans-serif; background: #fffcf5; }
+        .input-group { background: white; border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(255, 146, 43, 0.05); }
+        .lang-hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <nav class="p-6 flex justify-between items-center">
+        <a href="/lab" class="text-orange-500 font-bold"><i class="fas fa-chevron-left mr-2"></i>Family Lab</a>
+        <button onclick="toggleLang()" class="text-xs font-bold border-2 border-orange-200 px-4 py-1 rounded-full text-orange-500">
+            <span id="langBtn">English</span>
+        </button>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-black text-slate-800 mb-4">
+                <span class="lang-zh">定制家庭幸福方案</span>
+                <span class="lang-en lang-hidden">Family Happiness Roadmap</span>
+            </h1>
+            <p class="text-slate-500 text-sm">
+                <span class="lang-zh">输入家庭现状数据，AI 实验室为你生成科学行动指南。</span>
+                <span class="lang-en lang-hidden">Enter family data, let AI generate your bespoke action guide.</span>
+            </p>
+        </div>
+
+        <div class="space-y-6">
+            <!-- 数据录入 -->
+            <div class="input-group">
+                <h3 class="font-bold mb-4 text-orange-600"><i class="fas fa-users mr-2"></i>
+                    <span class="lang-zh">家庭成员</span><span class="lang-en lang-hidden">Members</span>
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">父亲/Dad</button>
+                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">母亲/Mom</button>
+                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">孩子/Kids</button>
+                    <button class="p-3 border-2 border-orange-100 rounded-xl text-xs hover:bg-orange-50">+ Add</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <h3 class="font-bold mb-4 text-orange-600"><i class="fas fa-comment-alt-heart mr-2"></i>
+                    <span class="lang-zh">当前最想解决的问题</span><span class="lang-en lang-hidden">Current Challenge</span>
+                </h3>
+                <textarea class="w-full bg-slate-50 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-orange-200" rows="3" 
+                    placeholder="例如：孩子不爱交流、夫妻缺乏深度沟通..."></textarea>
+            </div>
+
+            <button class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-orange-200 hover:scale-[1.02] transition">
+                <span class="lang-zh">生成家庭实验室报告</span><span class="lang-en lang-hidden">Generate Family Report</span>
+            </button>
+        </div>
+    </main>
+
+    <script>
+        let currentLang = 'zh';
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
+            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
+            document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
+        }
+    </script>
+</body>
+</html>

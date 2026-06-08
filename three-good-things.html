@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日三好 | HappyKua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700;800&family=Nunito:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+        :root {
+            --ink: #183048;
+            --muted: #6d7b86;
+            --paper: #fffaf0;
+            --paper-deep: #f4ecd9;
+            --jade: #2f8f78;
+            --jade-soft: #dff4ec;
+            --coral: #f27562;
+            --gold: #f6be4f;
+            --sky: #79b9d2;
+            --line: rgba(24, 48, 72, 0.12);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--ink);
+            font-family: 'Nunito', 'Noto Sans SC', sans-serif;
+            background:
+                radial-gradient(circle at 15% 8%, rgba(246, 190, 79, 0.22), transparent 32%),
+                radial-gradient(circle at 85% 12%, rgba(121, 185, 210, 0.24), transparent 34%),
+                linear-gradient(180deg, #fffaf0 0%, #eef8ee 70%, #e7f3ea 100%);
+        }
+
+        button, input, textarea { font: inherit; }
+
+        .shell {
+            width: min(100%, 430px);
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 18px 18px 104px;
+            position: relative;
+        }
+
+        .brand-word {
+            font-family: 'Fraunces', 'Noto Sans SC', serif;
+            font-weight: 800;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.88);
+            border-radius: 8px;
+            box-shadow: 0 18px 45px rgba(47, 99, 82, 0.12);
+            backdrop-filter: blur(18px);
+        }
+
+        .view { display: none; }
+        .view.active { display: block; animation: rise 0.42s ease both; }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .seed-wrap {
+            height: 198px;
+            position: relative;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .seed-glow {
+            width: 116px;
+            height: 136px;
+            border-radius: 58% 42% 52% 48% / 62% 55% 45% 38%;
+            background:
+                radial-gradient(circle at 38% 28%, #fff9d6 0 14%, transparent 15%),
+                linear-gradient(145deg, #fff3a7 0%, #f7c764 38%, #3ba987 100%);
+            box-shadow:
+                0 20px 42px rgba(47, 143, 120, 0.22),
+                0 0 52px rgba(246, 190, 79, 0.42);
+            animation: breathe 3.4s ease-in-out infinite;
+            position: relative;
+        }
+
+        .seed-glow::before,
+        .seed-glow::after {
+            content: "";
+            position: absolute;
+            background: rgba(24, 48, 72, 0.72);
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            top: 56px;
+        }
+
+        .seed-glow::before { left: 40px; }
+        .seed-glow::after { right: 40px; }
+
+        .seed-smile {
+            position: absolute;
+            width: 24px;
+            height: 13px;
+            border-bottom: 3px solid rgba(24, 48, 72, 0.65);
+            border-radius: 0 0 24px 24px;
+            top: 76px;
+            left: calc(50% - 12px);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.035); }
+        }
+
+        .garden-hill {
+            position: absolute;
+            width: 112%;
+            height: 86px;
+            left: -6%;
+            bottom: -28px;
+            background: linear-gradient(180deg, #cfead0, #a9d8bc);
+            border-radius: 50% 50% 0 0;
+        }
+
+        .spark {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px dashed rgba(24, 48, 72, 0.22);
+            display: grid;
+            place-items: center;
+            color: rgba(24, 48, 72, 0.28);
+            transition: all 0.3s ease;
+        }
+
+        .spark.filled {
+            background: radial-gradient(circle at 34% 26%, #fff9d6 0 12%, #f8ca55 28%, #f27562 72%);
+            border-color: rgba(255, 255, 255, 0.92);
+            color: white;
+            box-shadow: 0 9px 20px rgba(242, 117, 98, 0.24), 0 0 22px rgba(246, 190, 79, 0.46);
+        }
+
+        .spire-bloom {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            width: 76px;
+        }
+
+        .petal {
+            height: 10px;
+            border-radius: 999px;
+            opacity: 0.92;
+        }
+
+        .soft-input {
+            width: 100%;
+            min-height: 112px;
+            resize: none;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.74);
+            outline: none;
+            padding: 16px;
+            color: var(--ink);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+
+        .soft-input:focus {
+            border-color: rgba(47, 143, 120, 0.55);
+            box-shadow: 0 0 0 4px rgba(47, 143, 120, 0.12);
+        }
+
+        .primary-btn {
+            width: 100%;
+            border: 0;
+            border-radius: 8px;
+            padding: 15px 18px;
+            color: white;
+            background: linear-gradient(135deg, #247a67, #3aa884);
+            box-shadow: 0 14px 26px rgba(47, 143, 120, 0.22);
+            font-weight: 900;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .primary-btn:active { transform: translateY(1px) scale(0.99); }
+
+        .secondary-btn {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.68);
+            color: var(--ink);
+            font-weight: 800;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.72);
+            color: var(--ink);
+        }
+
+        .mic-btn {
+            width: 76px;
+            height: 76px;
+            border-radius: 999px;
+            border: 0;
+            color: white;
+            background: radial-gradient(circle at 32% 28%, #ffd98d, #f27562 50%, #2f8f78 100%);
+            box-shadow: 0 16px 32px rgba(242, 117, 98, 0.26);
+            display: grid;
+            place-items: center;
+            margin: 0 auto;
+        }
+
+        .chip {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 8px 11px;
+            background: rgba(255, 255, 255, 0.62);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .nav {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            width: min(calc(100% - 28px), 402px);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            padding: 8px;
+            z-index: 20;
+        }
+
+        .nav button {
+            border: 0;
+            background: transparent;
+            border-radius: 8px;
+            padding: 10px 6px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .nav button.active {
+            background: var(--jade-soft);
+            color: var(--jade);
+        }
+
+        .tiny-card {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.64);
+        }
+
+        .plant {
+            width: 28px;
+            height: 42px;
+            position: relative;
+        }
+
+        .plant::before {
+            content: "";
+            position: absolute;
+            width: 4px;
+            height: 32px;
+            left: 13px;
+            bottom: 0;
+            background: #2f8f78;
+            border-radius: 999px;
+        }
+
+        .plant::after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 22px;
+            left: 0;
+            top: 0;
+            background: radial-gradient(circle at 32% 30%, #fff8c7, #f6be4f 42%, #f27562);
+            clip-path: polygon(50% 0, 72% 32%, 100% 46%, 73% 66%, 62% 100%, 50% 76%, 38% 100%, 27% 66%, 0 46%, 28% 32%);
+            filter: drop-shadow(0 5px 10px rgba(246, 190, 79, 0.35));
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            top: 18px;
+            transform: translateX(-50%) translateY(-20px);
+            width: min(calc(100% - 28px), 390px);
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: rgba(24, 48, 72, 0.92);
+            color: white;
+            font-weight: 800;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.24s ease;
+            z-index: 40;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast"></div>
+
+    <main class="shell" id="appShell">
+        <header class="flex items-center justify-between mb-5">
+            <a href="index.html" class="icon-btn" aria-label="Back"><i class="fas fa-chevron-left"></i></a>
+            <div class="text-center">
+                <div class="brand-word text-xl">HappyKua</div>
+                <div class="text-[11px] font-black text-slate-400 uppercase tracking-wider" data-i18n="subtitle">每日三好</div>
+            </div>
+            <button class="icon-btn" id="langButton" aria-label="Switch language"><i class="fas fa-globe"></i></button>
+        </header>
+
+        <section id="todayView" class="view active" aria-label="Today">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-sm font-black text-slate-400" data-i18n="todayEyebrow">今天的幸福练习</p>
+                    <h1 class="brand-word text-[34px] leading-tight" data-i18n="todayTitle">收集三颗光</h1>
+                </div>
+                <div class="panel px-3 py-2 text-center">
+                    <div class="text-lg font-black" id="streakCount">0</div>
+                    <div class="text-[10px] font-black text-slate-400" data-i18n="days">天</div>
+                </div>
+            </div>
+
+            <div class="panel seed-wrap mb-4">
+                <div class="spire-bloom absolute top-4 right-4" aria-label="SPIRE bloom">
+                    <span class="petal" style="background:#f6be4f"></span>
+                    <span class="petal" style="background:#2f8f78"></span>
+                    <span class="petal" style="background:#79b9d2"></span>
+                    <span class="petal" style="background:#f27562"></span>
+                    <span class="petal" style="background:#183048"></span>
+                </div>
+                <div class="garden-hill"></div>
+                <div class="seed-glow"><span class="seed-smile"></span></div>
+            </div>
+
+            <div class="panel p-4 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h2 class="text-lg font-black" data-i18n="threeGoodThings">今日三好</h2>
+                        <p class="text-sm text-slate-500" data-i18n="tinyCounts">很小的事也算</p>
+                    </div>
+                    <div class="flex gap-2" id="todaySparkPreview"></div>
+                </div>
+                <button class="primary-btn" data-action="start-collect" onclick="startCollection()">
+                    <i class="fas fa-plus mr-2"></i><span data-i18n="addGoodThings">加入今天三件好事</span>
+                </button>
+            </div>
+
+            <div class="panel p-4" id="yesterdayActionPanel">
+                <div class="flex items-start gap-3">
+                    <div class="spark filled shrink-0"><i class="fas fa-check text-xs"></i></div>
+                    <div class="flex-1">
+                        <p class="text-xs font-black text-slate-400 uppercase" data-i18n="yesterdayAction">昨天的小行动</p>
+                        <p class="font-black" id="pendingActionText" data-i18n="noPending">今天先收集三件好事吧</p>
+                        <div class="mt-3 flex gap-2 hidden" id="pendingActionButtons">
+                            <button class="secondary-btn flex-1 text-sm" onclick="markAction(true)" data-i18n="done">做到了</button>
+                            <button class="secondary-btn flex-1 text-sm" onclick="markAction(false)" data-i18n="tryAgain">再试一次</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="collectorView" class="view" aria-label="Collect good things">
+            <div class="panel p-4 mb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <button class="icon-btn" onclick="showView('todayView')" aria-label="Close"><i class="fas fa-times"></i></button>
+                    <div class="flex gap-2" id="collectorSparkSlots"></div>
+                    <div class="w-11"></div>
+                </div>
+                <p class="text-sm font-black text-slate-400 text-center" id="stepLabel">Step 1 of 3</p>
+                <h2 class="brand-word text-3xl text-center mt-1" id="collectorPrompt">第一件小好事？</h2>
+            </div>
+
+            <div class="panel p-5">
+                <button class="mic-btn mb-4" onclick="startVoiceInput()" aria-label="Voice input"><i class="fas fa-microphone text-2xl"></i></button>
+                <textarea id="goodThingInput" class="soft-input" maxlength="140" placeholder="比如：今天阳光很好"></textarea>
+                <div class="flex items-center justify-between mt-3">
+                    <button class="chip" onclick="showHint()" type="button"><i class="fas fa-wand-magic-sparkles mr-1"></i><span data-i18n="needHint">给我一点提示</span></button>
+                    <span class="text-xs font-black text-slate-400" id="charCount">0/140</span>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-3" id="hintChips"></div>
+                <button class="primary-btn mt-5" data-action="collect-spark" onclick="collectSpark()">
+                    <span data-i18n="collectSpark">收下这颗光</span>
+                </button>
+            </div>
+        </section>
+
+        <section id="kuaActionView" class="view" aria-label="KUA action">
+            <div class="panel p-5 mb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-sm font-black text-slate-400">KUA</p>
+                        <h2 class="brand-word text-3xl" data-i18n="todayKua">今日小行动</h2>
+                    </div>
+                    <div class="seed-glow scale-[0.42] origin-right"></div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <div class="tiny-card p-3">
+                        <p class="text-xs font-black text-slate-400">Know / 知</p>
+                        <p class="text-sm font-black mt-2" id="knowText">你看见了支持</p>
+                    </div>
+                    <div class="tiny-card p-3">
+                        <p class="text-xs font-black text-slate-400">Unite / 联</p>
+                        <p class="text-sm font-black mt-2" id="uniteText">关系能量 +</p>
+                    </div>
+                    <div class="tiny-card p-3">
+                        <p class="text-xs font-black text-slate-400">Act / 行</p>
+                        <p class="text-sm font-black mt-2">1 min</p>
+                    </div>
+                </div>
+
+                <div class="tiny-card p-4 bg-white/80">
+                    <p class="text-xs font-black text-slate-400 uppercase" data-i18n="aiWhisper">AI 轻轻看见</p>
+                    <p class="text-lg font-black mt-2" id="insightText"></p>
+                    <div class="mt-4 p-4 rounded-lg" style="background: var(--jade-soft); border-radius: 8px;">
+                        <p class="text-xs font-black text-emerald-700 uppercase" data-i18n="oneMinute">1 分钟行动</p>
+                        <p class="text-xl font-black mt-1" id="actionText"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <button class="secondary-btn" data-action="make-easier" onclick="makeActionEasier()" data-i18n="makeEasier">变得更容易</button>
+                    <button class="primary-btn" onclick="savePractice()" data-i18n="iWillDo">我愿意做到</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="gardenView" class="view" aria-label="Happiness garden">
+            <div class="flex items-end justify-between mb-4">
+                <div>
+                    <p class="text-sm font-black text-slate-400" data-i18n="gardenEyebrow">你的练习正在发芽</p>
+                    <h2 class="brand-word text-[34px]" data-i18n="gardenTitle">幸福花园</h2>
+                </div>
+                <div class="panel px-3 py-2">
+                    <span class="font-black" id="weekProgress">0/7</span>
+                </div>
+            </div>
+            <div class="panel p-5 min-h-[260px] mb-4 relative overflow-hidden">
+                <div class="garden-hill"></div>
+                <div id="gardenPlants" class="relative z-10 grid grid-cols-5 gap-4 place-items-end min-h-[196px]"></div>
+            </div>
+            <div class="panel p-4 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-black" data-i18n="recentSparks">最近收集的光</h3>
+                    <button class="chip" onclick="clearDemoData()" data-i18n="reset">重置</button>
+                </div>
+                <div class="space-y-2" id="recentMemories"></div>
+            </div>
+            <div class="panel p-4 border-dashed">
+                <div class="flex items-center gap-3">
+                    <div class="spark filled"><i class="fas fa-lock text-xs"></i></div>
+                    <div class="flex-1">
+                        <p class="font-black" data-i18n="proPattern">查看你的幸福模式</p>
+                        <p class="text-sm text-slate-500" data-i18n="proCopy">Pro 解锁 SPIRE 周报与长期 AI 记忆</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="insightView" class="view" aria-label="Insights">
+            <div class="panel p-5">
+                <p class="text-sm font-black text-slate-400">Pro</p>
+                <h2 class="brand-word text-3xl mb-2" data-i18n="insightsTitle">轻量洞察</h2>
+                <p class="text-slate-500 leading-relaxed" data-i18n="insightsCopy">免费版只保留每天的小练习。付费版会在不打扰的情况下，帮你看见 SPIRE 五维幸福模式。</p>
+                <div class="grid grid-cols-5 gap-2 my-5">
+                    <div class="h-28 rounded" style="background:#f6be4f; border-radius:8px"></div>
+                    <div class="h-20 mt-8 rounded" style="background:#2f8f78; border-radius:8px"></div>
+                    <div class="h-24 mt-4 rounded" style="background:#79b9d2; border-radius:8px"></div>
+                    <div class="h-16 mt-12 rounded" style="background:#f27562; border-radius:8px"></div>
+                    <div class="h-12 mt-16 rounded" style="background:#183048; border-radius:8px"></div>
+                </div>
+                <button class="primary-btn" data-i18n="unlockPro">解锁 AI 幸福教练</button>
+            </div>
+        </section>
+    </main>
+
+    <nav class="nav panel" aria-label="Main navigation">
+        <button class="active" data-nav="todayView" onclick="showView('todayView')"><i class="fas fa-sun block mb-1"></i><span data-i18n="navToday">今日</span></button>
+        <button data-nav="gardenView" onclick="showView('gardenView')"><i class="fas fa-seedling block mb-1"></i><span data-i18n="navGarden">花园</span></button>
+        <button data-nav="insightView" onclick="showView('insightView')"><i class="fas fa-chart-simple block mb-1"></i><span data-i18n="navInsights">洞察</span></button>
+        <button onclick="showToast(texts[currentLang].comingSoon)"><i class="fas fa-users block mb-1"></i><span data-i18n="navCircle">关系圈</span></button>
+    </nav>
+
+    <script>
+        const STORAGE_KEY = "happykua-three-good-things";
+        const todayKey = new Date().toISOString().slice(0, 10);
+
+        const texts = {
+            zh: {
+                subtitle: "每日三好",
+                todayEyebrow: "今天的幸福练习",
+                todayTitle: "收集三颗光",
+                days: "天",
+                threeGoodThings: "今日三好",
+                tinyCounts: "很小的事也算",
+                addGoodThings: "加入今天三件好事",
+                yesterdayAction: "上一次的小行动",
+                noPending: "今天先收集三件好事吧",
+                done: "做到了",
+                tryAgain: "再试一次",
+                needHint: "给我一点提示",
+                collectSpark: "收下这颗光",
+                todayKua: "今日小行动",
+                aiWhisper: "AI 轻轻看见",
+                oneMinute: "1 分钟行动",
+                makeEasier: "变得更容易",
+                iWillDo: "我愿意做到",
+                gardenEyebrow: "你的练习正在发芽",
+                gardenTitle: "幸福花园",
+                recentSparks: "最近收集的光",
+                reset: "重置",
+                proPattern: "查看你的幸福模式",
+                proCopy: "Pro 解锁 SPIRE 周报与长期 AI 记忆",
+                insightsTitle: "轻量洞察",
+                insightsCopy: "免费版只保留每天的小练习。付费版会在不打扰的情况下，帮你看见 SPIRE 五维幸福模式。",
+                unlockPro: "解锁 AI 幸福教练",
+                navToday: "今日",
+                navGarden: "花园",
+                navInsights: "洞察",
+                navCircle: "关系圈",
+                comingSoon: "关系圈会连接家庭、伴侣和社群练习",
+                first: "第一件小好事？",
+                second: "还有一件呢？",
+                third: "最后一件，慢慢想也可以",
+                placeholder: "比如：今天阳光很好",
+                empty: "先写下或说出一件小好事",
+                saved: "今天的三颗光，已经收好",
+                voiceUnsupported: "当前浏览器暂不支持语音输入，可以先写下来",
+                listening: "我在听，慢慢说",
+                actionDone: "好，你把知道变成了做到",
+                actionRetry: "没关系，我们把它变小一点再来",
+                resetDone: "演示数据已重置",
+            },
+            en: {
+                subtitle: "3 Good Things",
+                todayEyebrow: "Today's happiness practice",
+                todayTitle: "Collect three sparks",
+                days: "days",
+                threeGoodThings: "3 Good Things",
+                tinyCounts: "Tiny things count",
+                addGoodThings: "Add today's good things",
+                yesterdayAction: "Last tiny action",
+                noPending: "Collect three good things first",
+                done: "Done",
+                tryAgain: "Try again",
+                needHint: "Need a hint?",
+                collectSpark: "Collect this spark",
+                todayKua: "Tiny action",
+                aiWhisper: "AI gently notices",
+                oneMinute: "1 min action",
+                makeEasier: "Make it easier",
+                iWillDo: "I'll do this",
+                gardenEyebrow: "Your practice is growing",
+                gardenTitle: "Happiness Garden",
+                recentSparks: "Recent sparks",
+                reset: "Reset",
+                proPattern: "See your happiness pattern",
+                proCopy: "Pro unlocks SPIRE weekly reports and long-term AI memory",
+                insightsTitle: "Light insights",
+                insightsCopy: "The free version keeps daily practice simple. Pro quietly reveals your SPIRE wellbeing pattern over time.",
+                unlockPro: "Unlock AI happiness coach",
+                navToday: "Today",
+                navGarden: "Garden",
+                navInsights: "Insights",
+                navCircle: "Circle",
+                comingSoon: "Circle will connect family, partners, and community practice",
+                first: "First small good thing?",
+                second: "One more?",
+                third: "Last one, take your time",
+                placeholder: "Example: sunlight felt good today",
+                empty: "Write or say one small good thing first",
+                saved: "Today's three sparks are saved",
+                voiceUnsupported: "Voice input is not supported here. You can write it down",
+                listening: "I'm listening. Take your time",
+                actionDone: "Good. You turned knowing into doing",
+                actionRetry: "No problem. We will make it smaller",
+                resetDone: "Demo data has been reset",
+            }
+        };
+
+        const hintBank = {
+            zh: ["今天的阳光", "一条消息", "完成一件小事", "一杯热饮", "身体舒服了一点", "有人听我说话"],
+            en: ["sunlight", "a message", "finished one task", "a warm drink", "body felt okay", "someone listened"]
+        };
+
+        let currentLang = localStorage.getItem("happykua-lang") || "zh";
+        let draftThings = [];
+        let currentAction = null;
+        let recognition = null;
+
+        function loadRecords() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch {
+                return [];
+            }
+        }
+
+        function writeRecords(records) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        }
+
+        function showView(viewId) {
+            document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+            document.getElementById(viewId).classList.add("active");
+            document.querySelectorAll("[data-nav]").forEach(button => {
+                button.classList.toggle("active", button.dataset.nav === viewId);
+            });
+            if (viewId === "gardenView") renderGarden();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function startCollection() {
+            draftThings = [];
+            currentAction = null;
+            document.getElementById("goodThingInput").value = "";
+            document.getElementById("hintChips").innerHTML = "";
+            renderCollector();
+            showView("collectorView");
+        }
+
+        function renderCollector() {
+            const step = draftThings.length;
+            const promptKey = step === 0 ? "first" : step === 1 ? "second" : "third";
+            document.getElementById("stepLabel").textContent = `Step ${step + 1} of 3`;
+            document.getElementById("collectorPrompt").textContent = texts[currentLang][promptKey];
+            document.getElementById("goodThingInput").placeholder = texts[currentLang].placeholder;
+            document.getElementById("collectorSparkSlots").innerHTML = [0, 1, 2].map(index => (
+                `<span class="spark ${index < step ? "filled" : ""}"><i class="fas fa-star text-xs"></i></span>`
+            )).join("");
+            updateCharCount();
+        }
+
+        function collectSpark() {
+            const input = document.getElementById("goodThingInput");
+            const value = input.value.trim();
+            if (!value) {
+                showToast(texts[currentLang].empty);
+                input.focus();
+                return;
+            }
+            draftThings.push(value);
+            input.value = "";
+            document.getElementById("hintChips").innerHTML = "";
+            if (draftThings.length >= 3) {
+                renderKuaAction();
+                showView("kuaActionView");
+                return;
+            }
+            renderCollector();
+        }
+
+        function showHint() {
+            const hints = hintBank[currentLang];
+            document.getElementById("hintChips").innerHTML = hints.map(hint => (
+                `<button class="chip" type="button" onclick="useHint('${escapeForAttribute(hint)}')">${hint}</button>`
+            )).join("");
+        }
+
+        function escapeForAttribute(value) {
+            return value.replace(/'/g, "\\'");
+        }
+
+        function useHint(hint) {
+            document.getElementById("goodThingInput").value = hint;
+            updateCharCount();
+        }
+
+        function startVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast(texts[currentLang].voiceUnsupported);
+                return;
+            }
+            recognition = new SpeechRecognition();
+            recognition.lang = currentLang === "zh" ? "zh-CN" : "en-US";
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            showToast(texts[currentLang].listening);
+            recognition.onresult = event => {
+                document.getElementById("goodThingInput").value = event.results[0][0].transcript;
+                updateCharCount();
+            };
+            recognition.start();
+        }
+
+        function classifyThings(things) {
+            const text = things.join(" ").toLowerCase();
+            const zh = currentLang === "zh";
+            const rules = [
+                {
+                    dimension: zh ? "关系能量 +" : "Relationship energy +",
+                    know: zh ? "你看见了连接" : "You noticed connection",
+                    insight: zh ? "今天的光里，有一部分来自被看见和被支持。" : "Some of today's sparks came from being seen and supported.",
+                    action: zh ? "给一个人发一句具体的谢谢。" : "Send one specific thank-you message.",
+                    easier: zh ? "只发一句：今天想到你，感觉挺好。" : "Send only: I thought of you today. It felt nice.",
+                    keywords: ["朋友", "家人", "妈妈", "爸爸", "同事", "消息", "聊天", "friend", "family", "message", "talk", "support"]
+                },
+                {
+                    dimension: zh ? "身体能量 +" : "Body energy +",
+                    know: zh ? "你感到了安顿" : "You felt grounded",
+                    insight: zh ? "今天的幸福很轻，来自身体和环境给你的照顾。" : "Today's happiness was gentle, coming from your body and surroundings.",
+                    action: zh ? "闭眼呼吸三次，感谢身体撑过今天。" : "Close your eyes, breathe three times, and thank your body.",
+                    easier: zh ? "只把手放在胸口，呼吸一次。" : "Just place a hand on your chest and take one breath.",
+                    keywords: ["阳光", "风", "散步", "睡", "茶", "饭", "舒服", "身体", "sun", "walk", "sleep", "tea", "body", "comfortable"]
+                },
+                {
+                    dimension: zh ? "完成感 +" : "Progress energy +",
+                    know: zh ? "你看见了推进" : "You noticed progress",
+                    insight: zh ? "你今天给自己创造了一点确定感。" : "You created a little certainty for yourself today.",
+                    action: zh ? "把今天完成的小事告诉未来的自己。" : "Tell your future self one small thing you completed.",
+                    easier: zh ? "只写下两个字：做到了。" : "Write only two words: I did.",
+                    keywords: ["完成", "推进", "工作", "任务", "搞定", "学习", "finished", "work", "task", "done", "learn"]
+                }
+            ];
+            return rules.find(rule => rule.keywords.some(keyword => text.includes(keyword))) || {
+                dimension: zh ? "情绪能量 +" : "Emotional energy +",
+                know: zh ? "你看见了微光" : "You noticed a spark",
+                insight: zh ? "你正在训练自己，把注意力从压力里轻轻转回来。" : "You are training attention to return gently from stress.",
+                action: zh ? "对自己说一句：今天这样也可以。" : "Tell yourself: today can be enough as it is.",
+                easier: zh ? "只在心里说：可以。" : "Simply say inside: enough.",
+            };
+        }
+
+        function renderKuaAction() {
+            currentAction = classifyThings(draftThings);
+            document.getElementById("knowText").textContent = currentAction.know;
+            document.getElementById("uniteText").textContent = currentAction.dimension;
+            document.getElementById("insightText").textContent = currentAction.insight;
+            document.getElementById("actionText").textContent = currentAction.action;
+        }
+
+        function makeActionEasier() {
+            if (!currentAction) return;
+            currentAction.action = currentAction.easier;
+            document.getElementById("actionText").textContent = currentAction.action;
+        }
+
+        function savePractice() {
+            if (!currentAction || draftThings.length !== 3) return;
+            const records = loadRecords();
+            const nextRecords = records.filter(record => record.date !== todayKey);
+            nextRecords.push({
+                date: todayKey,
+                things: draftThings,
+                insight: currentAction.insight,
+                action: currentAction.action,
+                dimension: currentAction.dimension,
+                actionDone: null,
+                savedAt: new Date().toISOString()
+            });
+            writeRecords(nextRecords);
+            showToast(texts[currentLang].saved);
+            renderToday();
+            renderGarden();
+            showView("gardenView");
+        }
+
+        function renderGarden() {
+            const records = loadRecords().sort((a, b) => a.date.localeCompare(b.date));
+            const recent = records.slice(-7);
+            document.getElementById("weekProgress").textContent = `${recent.length}/7`;
+            document.getElementById("gardenPlants").innerHTML = Array.from({ length: 10 }, (_, index) => (
+                index < records.length
+                    ? `<div class="plant" title="${records[index].date}"></div>`
+                    : `<div class="spark"><i class="fas fa-plus text-xs"></i></div>`
+            )).join("");
+            document.getElementById("recentMemories").innerHTML = records.slice(-3).reverse().map(record => (
+                `<div class="tiny-card p-3">
+                    <p class="text-xs font-black text-slate-400">${record.date} · ${record.dimension}</p>
+                    <p class="font-black mt-1">${record.things[0]}</p>
+                </div>`
+            )).join("") || `<p class="text-sm text-slate-500">${texts[currentLang].noPending}</p>`;
+        }
+
+        function renderToday() {
+            const records = loadRecords().sort((a, b) => a.date.localeCompare(b.date));
+            document.getElementById("streakCount").textContent = calculateStreak(records);
+            const todayRecord = records.find(record => record.date === todayKey);
+            const filled = todayRecord ? 3 : 0;
+            document.getElementById("todaySparkPreview").innerHTML = [0, 1, 2].map(index => (
+                `<span class="spark ${index < filled ? "filled" : ""}"><i class="fas fa-star text-xs"></i></span>`
+            )).join("");
+            const pending = [...records].reverse().find(record => record.action && record.actionDone === null && record.date !== todayKey);
+            const pendingText = document.getElementById("pendingActionText");
+            const pendingButtons = document.getElementById("pendingActionButtons");
+            if (pending) {
+                pendingText.textContent = pending.action;
+                pendingText.dataset.date = pending.date;
+                pendingButtons.classList.remove("hidden");
+            } else {
+                pendingText.textContent = texts[currentLang].noPending;
+                pendingText.dataset.date = "";
+                pendingButtons.classList.add("hidden");
+            }
+        }
+
+        function calculateStreak(records) {
+            if (!records.length) return 0;
+            const dates = new Set(records.map(record => record.date));
+            let cursor = new Date();
+            let streak = 0;
+            while (dates.has(cursor.toISOString().slice(0, 10))) {
+                streak += 1;
+                cursor.setDate(cursor.getDate() - 1);
+            }
+            return streak;
+        }
+
+        function markAction(done) {
+            const date = document.getElementById("pendingActionText").dataset.date;
+            if (!date) return;
+            const records = loadRecords().map(record => (
+                record.date === date ? { ...record, actionDone: done } : record
+            ));
+            writeRecords(records);
+            showToast(done ? texts[currentLang].actionDone : texts[currentLang].actionRetry);
+            renderToday();
+        }
+
+        function clearDemoData() {
+            localStorage.removeItem(STORAGE_KEY);
+            renderToday();
+            renderGarden();
+            showToast(texts[currentLang].resetDone);
+        }
+
+        function updateCharCount() {
+            const input = document.getElementById("goodThingInput");
+            document.getElementById("charCount").textContent = `${input.value.length}/140`;
+        }
+
+        function applyLanguage() {
+            document.documentElement.lang = currentLang;
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.dataset.i18n;
+                if (texts[currentLang][key]) el.textContent = texts[currentLang][key];
+            });
+            localStorage.setItem("happykua-lang", currentLang);
+            renderToday();
+            renderCollector();
+            renderGarden();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+            clearTimeout(showToast.timer);
+            showToast.timer = setTimeout(() => toast.classList.remove("show"), 1900);
+        }
+
+        document.getElementById("langButton").addEventListener("click", () => {
+            currentLang = currentLang === "zh" ? "en" : "zh";
+            applyLanguage();
+        });
+
+        document.getElementById("goodThingInput").addEventListener("input", updateCharCount);
+
+        applyLanguage();
+        renderToday();
+    </script>
+</body>
+</html>

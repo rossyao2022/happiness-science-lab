@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸福卡牌 | Happiness Cards - HappyKua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;800&family=Noto+Sans+SC:wght@400;700&display=swap');
+        body { font-family: 'Lexend', 'Noto Sans SC', sans-serif; background: #e0f2f1; height: 100vh; overflow: hidden; }
+        .card-inner { transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; position: relative; width: 100%; height: 100%; }
+        .card-container { perspective: 1000px; width: 280px; height: 400px; margin: 0 auto; }
+        .flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .card-front { background: white; border: 8px solid #b2dfdb; }
+        .card-back { background: linear-gradient(135deg, #26a69a 0%, #00897b 100%); color: white; transform: rotateY(180deg); text-align: center; }
+        .lang-hidden { display: none !important; }
+    </style>
+</head>
+<body class="flex flex-col items-center">
+    <nav class="w-full p-6 flex justify-between items-center">
+        <a href="/lab" class="text-teal-600"><i class="fas fa-arrow-left"></i></a>
+        <button onclick="toggleLang()" id="langBtn" class="text-xs font-bold text-teal-800">English</button>
+    </nav>
+
+    <main class="flex-1 flex flex-col items-center justify-center gap-12">
+        <div class="text-center">
+            <h2 class="text-2xl font-black text-teal-900 mb-2">
+                <span class="lang-zh">每日灵感抽卡</span><span class="lang-en lang-hidden">Daily Action Card</span>
+            </h2>
+            <p class="text-sm text-teal-600">
+                <span class="lang-zh">点击卡牌，解锁今天的 A (行动) 指令</span>
+                <span class="lang-en lang-hidden">Click to reveal your Action for today</span>
+            </p>
+        </div>
+
+        <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+            <div class="card-inner">
+                <!-- 正面 -->
+                <div class="card-face card-front">
+                    <div class="text-6xl mb-6">?</div>
+                    <div class="font-black text-teal-200 tracking-widest">HAPPYKUA</div>
+                </div>
+                <!-- 背面 -->
+                <div class="card-face card-back">
+                    <i class="fas fa-comment-dots text-4xl mb-6 opacity-50"></i>
+                    <h3 class="text-xl font-bold mb-4">
+                        <span class="lang-zh">深度倾听</span><span class="lang-en lang-hidden">Deep Listening</span>
+                    </h3>
+                    <p class="text-sm leading-relaxed opacity-90">
+                        <span class="lang-zh">今天在对话中，在对方说完后停顿3秒再开口。</span>
+                        <span class="lang-en lang-hidden">Today, pause for 3 seconds after someone finishes speaking before you respond.</span>
+                    </p>
+                    <div class="mt-8 pt-8 border-t border-white/20 text-[10px] tracking-widest uppercase font-bold">
+                        Category: Union (链接)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="mt-8 bg-teal-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-teal-200 hover:bg-teal-700 transition">
+            <span class="lang-zh">换一张</span><span class="lang-en lang-hidden">Shuffle</span>
+        </button>
+    </main>
+
+    <script>
+        let currentLang = 'zh';
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
+            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
+            document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天赋实验室 | Talent Lab - HappyKua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=Nunito:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+        :root {
+            --ink: #263247;
+            --muted: #778096;
+            --paper: #fff7f1;
+            --rose: #ff6b6b;
+            --orange: #ff922b;
+            --gold: #fcc419;
+            --blue: #5c7cfa;
+            --green: #51cf66;
+            --line: rgba(38, 50, 71, 0.12);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            color: var(--ink);
+            font-family: 'Nunito', 'Noto Sans SC', sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(255, 107, 107, 0.22), transparent 32%),
+                radial-gradient(circle at 90% 12%, rgba(92, 124, 250, 0.18), transparent 34%),
+                linear-gradient(135deg, #fff7f1 0%, #f1f5ff 72%, #eefaf2 100%);
+        }
+
+        button, textarea { font: inherit; }
+
+        .brand-font { font-family: 'Fraunces', 'Noto Sans SC', serif; }
+
+        .app-shell {
+            width: min(100%, 880px);
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 18px 16px 28px;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.86);
+            border-radius: 8px;
+            box-shadow: 0 18px 44px rgba(255, 107, 107, 0.11);
+            backdrop-filter: blur(18px);
+        }
+
+        .report-panel {
+            background: rgba(255, 255, 255, 0.94);
+            border-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 18px 44px rgba(38, 50, 71, 0.08);
+        }
+
+        .rainbow-line {
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(to right, var(--rose), var(--orange), var(--gold), var(--green), var(--blue));
+        }
+
+        .view { display: none; }
+        .view.active { display: block; animation: rise 0.32s ease both; }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-window {
+            height: calc(100vh - 252px);
+            min-height: 420px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .chat-window::-webkit-scrollbar { display: none; }
+
+        .ai-bubble,
+        .user-bubble {
+            border-radius: 8px;
+            animation: rise 0.25s ease both;
+        }
+
+        .ai-bubble {
+            background: rgba(255, 255, 255, 0.88);
+            border-left: 4px solid var(--rose);
+            box-shadow: 0 10px 24px rgba(255, 107, 107, 0.1);
+        }
+
+        .user-bubble {
+            color: white;
+            background: linear-gradient(135deg, var(--rose), var(--orange));
+            box-shadow: 0 12px 24px rgba(255, 107, 107, 0.18);
+        }
+
+        .soft-input {
+            min-height: 52px;
+            max-height: 132px;
+            resize: none;
+            outline: none;
+        }
+
+        .primary-btn {
+            border: 0;
+            border-radius: 8px;
+            color: white;
+            background: linear-gradient(135deg, var(--rose), var(--orange));
+            box-shadow: 0 14px 26px rgba(255, 107, 107, 0.2);
+            font-weight: 900;
+            transition: transform 0.18s ease;
+        }
+
+        .primary-btn:active { transform: translateY(1px) scale(0.99); }
+
+        .ghost-btn {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.74);
+            color: var(--ink);
+            font-weight: 900;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(38, 50, 71, 0.12);
+        }
+
+        .step-dot.active,
+        .step-dot.done {
+            background: linear-gradient(135deg, var(--rose), var(--orange));
+            box-shadow: 0 0 0 5px rgba(255, 107, 107, 0.12);
+        }
+
+        .theme-pill {
+            border-radius: 999px;
+            padding: 8px 11px;
+            background: rgba(255, 107, 107, 0.1);
+            color: #c74655;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .report-section {
+            border-top: 1px solid var(--line);
+            padding-top: 18px;
+        }
+
+        .icon-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            color: white;
+            background: linear-gradient(135deg, var(--rose), var(--orange));
+            box-shadow: 0 12px 22px rgba(255, 107, 107, 0.2);
+        }
+
+        @media (max-width: 640px) {
+            .chat-window {
+                height: calc(100vh - 236px);
+                min-height: 360px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="app-shell">
+        <nav class="glass p-4 flex items-center justify-between sticky top-3 z-20">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-10 h-10 rounded-full bg-white/80 grid place-items-center text-slate-500 hover:text-red-500 transition" aria-label="Back">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <div>
+                    <div class="brand-font text-xl leading-none">
+                        <span class="text-red-500">Talent</span><span class="text-slate-400"> Lab</span>
+                    </div>
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-400" data-i18n="navSub">天赋使用说明书</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleLanguage()" class="ghost-btn px-3 py-2 text-xs flex items-center gap-2">
+                    <i class="fas fa-globe"></i><span id="langDisplay">English</span>
+                </button>
+                <button onclick="restartTalentLab()" class="ghost-btn px-3 py-2 text-xs" data-i18n="restart">重来</button>
+            </div>
+        </nav>
+        <div class="rainbow-line my-4"></div>
+
+        <section id="chatView" class="view active">
+            <div class="grid md:grid-cols-[1fr_260px] gap-4">
+                <div class="glass p-4">
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-black text-slate-400" data-i18n="eyebrow">四步天赋采集</p>
+                            <h1 class="brand-font text-3xl md:text-4xl leading-tight" data-i18n="title">找到你的底层发光方式</h1>
+                        </div>
+                        <div class="hidden sm:flex gap-2 pt-2" id="stepDots"></div>
+                    </div>
+
+                    <div id="chatWindow" class="chat-window space-y-5 py-2"></div>
+
+                    <div id="typing" class="invisible mt-2 text-xs text-slate-400 italic">
+                        <i class="fas fa-circle-notch fa-spin mr-1"></i><span id="typingText">正在整理你的天赋线索...</span>
+                    </div>
+                </div>
+
+                <aside class="glass p-4 hidden md:block">
+                    <div class="icon-mark mb-4"><i class="fas fa-fingerprint"></i></div>
+                    <h2 class="font-black text-lg mb-2" data-i18n="sideTitle">报告会包含什么？</h2>
+                    <div class="space-y-3 text-sm text-slate-500 leading-relaxed">
+                        <p data-i18n="sideOne">核心天赋画像</p>
+                        <p data-i18n="sideTwo">童年线索与无意识胜任</p>
+                        <p data-i18n="sideThree">阴影天赋与 KUA 行动</p>
+                    </div>
+                    <div class="mt-5 p-3 rounded-lg bg-red-50 text-xs text-red-500 font-black leading-relaxed" data-i18n="sideNote">
+                        先生成轻量版，完整版可作为付费报告解锁。
+                    </div>
+                </aside>
+            </div>
+
+            <div class="glass p-2 mt-4 flex items-end gap-2">
+                <textarea id="userInput" rows="1" class="soft-input flex-1 p-3 bg-transparent text-sm" placeholder="请分享你的故事..."></textarea>
+                <button id="sendButton" onclick="sendMessage()" class="primary-btn w-12 h-12 shrink-0 grid place-items-center" aria-label="Send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+                <button id="generateButton" onclick="generateTalentReport()" class="primary-btn hidden px-5 h-12 shrink-0">
+                    <span data-i18n="generate">生成报告</span>
+                </button>
+            </div>
+            <div class="flex justify-between px-2 mt-3">
+                <span class="text-[10px] text-slate-400 font-black tracking-widest uppercase">KUA Talent System</span>
+                <span id="stepCounter" class="text-[10px] text-red-400 font-black uppercase tracking-widest">Step: 0 / 4</span>
+            </div>
+        </section>
+
+        <section id="reportView" class="view">
+            <div class="glass report-panel p-5 md:p-7">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-5 mb-6">
+                    <div>
+                        <p class="text-sm font-black text-slate-400" data-i18n="reportEyebrow">轻量版报告</p>
+                        <h1 class="brand-font text-4xl leading-tight" id="reportTitle">个人天赋使用说明书</h1>
+                        <p class="text-slate-500 mt-2" id="reportSummary"></p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="showView('chatView')" class="ghost-btn px-4 py-3 text-sm" data-i18n="backChat">回到对话</button>
+                        <button onclick="copyReport()" class="primary-btn px-4 py-3 text-sm" data-i18n="copyReport">复制报告</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-6" id="themePills"></div>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="glass report-panel p-4 shadow-none">
+                        <p class="text-xs font-black text-slate-400 uppercase">Core Talent</p>
+                        <h2 class="font-black text-2xl mt-2" id="coreTalent"></h2>
+                        <p class="text-slate-500 leading-relaxed mt-2" id="coreTalentText"></p>
+                    </div>
+                    <div class="glass report-panel p-4 shadow-none">
+                        <p class="text-xs font-black text-slate-400 uppercase">Energy Source</p>
+                        <h2 class="font-black text-2xl mt-2" id="energySource"></h2>
+                        <p class="text-slate-500 leading-relaxed mt-2" id="energySourceText"></p>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h2 class="font-black text-xl mb-3" data-i18n="cluesTitle">你的 4 个天赋线索</h2>
+                    <div class="grid md:grid-cols-2 gap-3" id="clueCards"></div>
+                </div>
+
+                <div class="report-section mt-6">
+                    <h2 class="font-black text-xl mb-3">KUA</h2>
+                    <div class="grid md:grid-cols-3 gap-3" id="kuaActions"></div>
+                </div>
+
+                <div class="report-section mt-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="icon-mark"><i class="fas fa-lock"></i></div>
+                        <div>
+                            <h2 class="font-black text-xl" data-i18n="proTitle">解锁完整版天赋报告</h2>
+                            <p class="text-sm text-slate-500" data-i18n="proCopy">包含 3 个天赋原型、职业场景、关系提醒、7 天天赋激活计划和 PDF 导出。</p>
+                        </div>
+                    </div>
+                    <button class="primary-btn px-5 py-3" onclick="showUpgradeMessage()" data-i18n="unlock">解锁完整报告</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const TALENT_STATE_KEY = "happykua-talent-state";
+        const TALENT_REPORT_KEY = "happykua-talent-report";
+
+        const i18n = {
+            zh: {
+                langName: "English",
+                navSub: "天赋使用说明书",
+                restart: "重来",
+                eyebrow: "四步天赋采集",
+                title: "找到你的底层发光方式",
+                sideTitle: "报告会包含什么？",
+                sideOne: "核心天赋画像",
+                sideTwo: "童年线索与无意识胜任",
+                sideThree: "阴影天赋与 KUA 行动",
+                sideNote: "先生成轻量版，完整版可作为付费报告解锁。",
+                typing: "正在整理你的天赋线索...",
+                placeholder: "请分享你的故事...",
+                generate: "生成报告",
+                reportEyebrow: "轻量版报告",
+                backChat: "回到对话",
+                copyReport: "复制报告",
+                cluesTitle: "你的 4 个天赋线索",
+                proTitle: "解锁完整版天赋报告",
+                proCopy: "包含 3 个天赋原型、职业场景、关系提醒、7 天天赋激活计划和 PDF 导出。",
+                unlock: "解锁完整报告",
+                copied: "报告已复制",
+                upgrade: "这里后续可以接入付费：完整版报告、PDF 导出和 AI 深度解读。",
+                needAnswer: "先写一点真实经历，报告会更有用。",
+                reset: "已重新开始",
+                intro: "<b>你好，我是你的天赋挖掘伙伴。</b><br><br>我会用 4 个问题帮你收集天赋线索。你不用回答得完美，只要讲真实经历。最后我会生成一份轻量版《个人天赋使用说明书》。<br><br>准备好后，先回一句“开始”也可以。",
+                questions: [
+                    "<b>第一步：童年线索。</b><br>16 岁以前，有什么事是没人逼你也会反复去做的？或者你小时候常被批评的“缺点”是什么？",
+                    "<b>第二步：无意识胜任。</b><br>成年后，有什么事你觉得很自然，但别人会觉得很难？",
+                    "<b>第三步：能量审计。</b><br>做什么事会让你身体累，但精神反而变亮，有一种回血感？",
+                    "<b>第四步：阴影宝藏。</b><br>你曾经羡慕或嫉妒过哪类人？他们身上什么东西最刺痛你？"
+                ],
+                ready: "<b>线索收集完成。</b><br>我已经捕捉到你的天赋碎片。现在可以生成你的轻量版天赋报告。",
+                reportTitle: "个人天赋使用说明书",
+                reportSummary: "这是一份基于你 4 段真实回答生成的轻量版报告。它不是给你贴标签，而是帮你看见：什么事情会让你自然发光，以及下一步怎么做到。",
+                kua: {
+                    know: "知：看见你的天赋",
+                    unite: "联：连接一个真实场景",
+                    act: "行：做一个 10 分钟实验"
+                }
+            },
+            en: {
+                langName: "中文",
+                navSub: "Personal Talent Manual",
+                restart: "Restart",
+                eyebrow: "4-step talent capture",
+                title: "Find how you naturally shine",
+                sideTitle: "What will the report include?",
+                sideOne: "Core talent portrait",
+                sideTwo: "Childhood clues and natural strengths",
+                sideThree: "Shadow gift and KUA actions",
+                sideNote: "Start with a light report. The full version can become a paid upgrade.",
+                typing: "Organizing your talent clues...",
+                placeholder: "Share your story...",
+                generate: "Generate report",
+                reportEyebrow: "Light report",
+                backChat: "Back to chat",
+                copyReport: "Copy report",
+                cluesTitle: "Your 4 talent clues",
+                proTitle: "Unlock full talent report",
+                proCopy: "Includes 3 talent archetypes, work scenarios, relationship notes, 7-day activation plan, and PDF export.",
+                unlock: "Unlock full report",
+                copied: "Report copied",
+                upgrade: "This can later connect to payment: full report, PDF export, and deeper AI interpretation.",
+                needAnswer: "Write a real experience first. The report will be more useful.",
+                reset: "Restarted",
+                intro: "<b>Hello, I am your talent discovery partner.</b><br><br>I will collect talent clues through 4 questions. You do not need perfect answers. Share real experiences, and I will generate a light Personal Talent Manual.<br><br>You can start by saying “ready”.",
+                questions: [
+                    "<b>Step 1: Childhood clues.</b><br>Before age 16, what did you repeatedly do without being pushed? Or what “flaw” were you often criticized for?",
+                    "<b>Step 2: Natural competence.</b><br>As an adult, what feels obvious to you but difficult for others?",
+                    "<b>Step 3: Energy audit.</b><br>What leaves you physically tired but mentally brighter, almost recharged?",
+                    "<b>Step 4: Shadow gift.</b><br>What kind of person have you envied? What quality in them stings the most?"
+                ],
+                ready: "<b>Clues collected.</b><br>I have captured your talent fragments. You can now generate your light talent report.",
+                reportTitle: "Personal Talent Manual",
+                reportSummary: "This light report is generated from your 4 real answers. It does not label you. It helps you see what makes you naturally shine and how to turn it into action.",
+                kua: {
+                    know: "Know: see your talent",
+                    unite: "Unite: connect it to a real scene",
+                    act: "Act: run a 10-minute experiment"
+                }
+            }
+        };
+
+        const themeRules = [
+            {
+                id: "insight",
+                zh: "洞察型",
+                en: "Insight Maker",
+                keywords: ["观察", "分析", "理解", "看见", "本质", "思考", "研究", "洞察", "observe", "analyze", "understand", "insight", "think", "research"],
+                textZh: "你容易从复杂细节里看见模式，擅长把模糊感受整理成清晰判断。",
+                textEn: "You tend to see patterns in complexity and turn vague signals into clear judgment."
+            },
+            {
+                id: "creator",
+                zh: "创造型",
+                en: "Creator",
+                keywords: ["画", "写", "设计", "创作", "表达", "想象", "做东西", "音乐", "create", "write", "design", "make", "imagine", "music", "art"],
+                textZh: "你的能量常在创造里被点亮，越能表达自己的东西，越容易进入心流。",
+                textEn: "Your energy lights up through creation. Personal expression helps you enter flow."
+            },
+            {
+                id: "connector",
+                zh: "连接型",
+                en: "Connector",
+                keywords: ["朋友", "聊天", "倾听", "关系", "帮助", "共情", "团队", "family", "friend", "listen", "relationship", "help", "team", "empathy"],
+                textZh: "你对人的状态敏感，擅长建立信任、理解他人，并让关系流动起来。",
+                textEn: "You are sensitive to people, good at building trust, understanding others, and moving relationships forward."
+            },
+            {
+                id: "builder",
+                zh: "推进型",
+                en: "Builder",
+                keywords: ["完成", "执行", "组织", "计划", "推进", "落地", "目标", "finished", "execute", "organize", "plan", "build", "goal", "deliver"],
+                textZh: "你会从把事情真正做出来里获得确定感，擅长把想法变成步骤和结果。",
+                textEn: "You gain energy from making things real and can turn ideas into steps and outcomes."
+            },
+            {
+                id: "sensitive",
+                zh: "敏感感知型",
+                en: "Sensitive Sensor",
+                keywords: ["敏感", "情绪", "感受", "气氛", "细腻", "美", "身体", "sensitive", "emotion", "feeling", "beauty", "body", "mood"],
+                textZh: "你的敏感不是负担，它可能是一种高分辨率感知，让你更早捕捉情绪、氛围和需要。",
+                textEn: "Your sensitivity may be high-resolution perception, helping you notice emotions, atmosphere, and needs earlier."
+            }
+        ];
+
+        let currentLang = localStorage.getItem("happykua-talent-lang") || "zh";
+        let currentStep = 0;
+        let talentAnswers = [];
+        let lastReport = null;
+
+        window.onload = () => {
+            restoreTalentState();
+            applyLanguage();
+            if (!document.getElementById("chatWindow").children.length) {
+                addBubble(i18n[currentLang].intro, "ai");
+            }
+            renderStepDots();
+            updateControls();
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === "zh" ? "en" : "zh";
+            localStorage.setItem("happykua-talent-lang", currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const t = i18n[currentLang];
+            document.documentElement.lang = currentLang;
+            document.getElementById("langDisplay").innerText = t.langName;
+            document.getElementById("typingText").innerText = t.typing;
+            document.getElementById("userInput").placeholder = t.placeholder;
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.dataset.i18n;
+                if (t[key]) el.innerText = t[key];
+            });
+            renderStepDots();
+            if (lastReport) renderReport(lastReport);
+        }
+
+        function addBubble(content, role) {
+            const chatWindow = document.getElementById("chatWindow");
+            const wrapper = document.createElement("div");
+            wrapper.className = `flex ${role === "user" ? "justify-end" : "justify-start"} gap-3`;
+            wrapper.innerHTML = role === "user"
+                ? `<div class="user-bubble p-4 max-w-[88%] text-sm leading-relaxed">${escapeHtml(content)}</div>`
+                : `<div class="w-10 h-10 rounded-full bg-red-100 text-red-500 shrink-0 grid place-items-center"><i class="fas fa-fingerprint"></i></div><div class="ai-bubble p-4 max-w-[88%] text-sm leading-relaxed">${content}</div>`;
+            chatWindow.appendChild(wrapper);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("userInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            addBubble(text, "user");
+            input.value = "";
+            input.style.height = "auto";
+
+            if (currentStep > 0 && currentStep <= 4) {
+                talentAnswers[currentStep - 1] = {
+                    step: currentStep,
+                    question: i18n.zh.questions[currentStep - 1].replace(/<[^>]*>/g, ""),
+                    answer: text
+                };
+                saveTalentState();
+            }
+
+            const typing = document.getElementById("typing");
+            typing.classList.remove("invisible");
+
+            setTimeout(() => {
+                typing.classList.add("invisible");
+                if (currentStep < i18n[currentLang].questions.length) {
+                    addBubble(i18n[currentLang].questions[currentStep], "ai");
+                    currentStep++;
+                    saveTalentState();
+                    renderStepDots();
+                    updateControls();
+                } else {
+                    addBubble(i18n[currentLang].ready, "ai");
+                    saveTalentState();
+                    updateControls(true);
+                }
+            }, 520);
+        }
+
+        function updateControls(forceReady = false) {
+            const ready = forceReady || talentAnswers.length >= 4;
+            document.getElementById("sendButton").classList.toggle("hidden", ready);
+            document.getElementById("generateButton").classList.toggle("hidden", !ready);
+            document.getElementById("stepCounter").innerText = `Step: ${Math.min(currentStep, 4)} / 4`;
+        }
+
+        function renderStepDots() {
+            document.getElementById("stepDots").innerHTML = [1, 2, 3, 4].map(step => {
+                const cls = step < currentStep ? "done" : step === currentStep ? "active" : "";
+                return `<span class="step-dot ${cls}"></span>`;
+            }).join("");
+        }
+
+        function saveTalentState() {
+            localStorage.setItem(TALENT_STATE_KEY, JSON.stringify({
+                currentStep,
+                talentAnswers,
+                chatHtml: document.getElementById("chatWindow").innerHTML
+            }));
+        }
+
+        function restoreTalentState() {
+            try {
+                const state = JSON.parse(localStorage.getItem(TALENT_STATE_KEY) || "null");
+                if (!state) return;
+                currentStep = state.currentStep || 0;
+                talentAnswers = state.talentAnswers || [];
+                document.getElementById("chatWindow").innerHTML = state.chatHtml || "";
+                const savedReport = JSON.parse(localStorage.getItem(TALENT_REPORT_KEY) || "null");
+                if (savedReport) lastReport = savedReport;
+            } catch {
+                currentStep = 0;
+                talentAnswers = [];
+            }
+        }
+
+        function generateTalentReport() {
+            if (talentAnswers.length < 4 || talentAnswers.some(item => !item.answer || item.answer.length < 2)) {
+                showToast(i18n[currentLang].needAnswer);
+                return;
+            }
+            lastReport = buildTalentReport(talentAnswers);
+            localStorage.setItem(TALENT_REPORT_KEY, JSON.stringify(lastReport));
+            renderReport(lastReport);
+            showView("reportView");
+        }
+
+        function buildTalentReport(answers) {
+            const themes = detectTalentThemes(answers);
+            const primary = themes[0] || themeRules[0];
+            const secondary = themes[1] || themeRules[2];
+            const lang = currentLang;
+            const zh = lang === "zh";
+            const answerText = answers.map(item => item.answer).join(" ");
+
+            return {
+                title: i18n[lang].reportTitle,
+                summary: i18n[lang].reportSummary,
+                themes: themes.slice(0, 3).map(theme => zh ? theme.zh : theme.en),
+                coreTalent: zh ? `${primary.zh} × ${secondary.zh}` : `${primary.en} × ${secondary.en}`,
+                coreTalentText: zh
+                    ? `${primary.textZh} 同时，你也带着「${secondary.zh}」的线索。你的天赋不只是会什么，而是你在哪些情境里会自然变亮。`
+                    : `${primary.textEn} You also carry signs of the ${secondary.en}. Talent is not only what you can do, but where you naturally brighten.`,
+                energySource: inferEnergySource(answerText, zh),
+                energySourceText: zh
+                    ? "当你靠近这个能量来源时，不一定更轻松，但会更像自己。这是判断天赋是否值得发展的重要信号。"
+                    : "When you move toward this energy source, it may not feel easier, but it feels more like you. That is an important signal.",
+                clues: answers.map((item, index) => ({
+                    title: getClueTitle(index, zh),
+                    text: item.answer
+                })),
+                kua: [
+                    {
+                        title: i18n[lang].kua.know,
+                        text: zh ? `先承认：你的「${zh ? primary.zh : primary.en}」不是偶然，它反复出现在你的故事里。` : `First acknowledge that your ${primary.en} is not random. It repeats in your story.`
+                    },
+                    {
+                        title: i18n[lang].kua.unite,
+                        text: zh ? "选择一个真实场景：工作、学习、关系或创作，把这个天赋用在一个小问题上。" : "Choose one real scene: work, learning, relationship, or creation. Use this talent on one small problem."
+                    },
+                    {
+                        title: i18n[lang].kua.act,
+                        text: zh ? "未来 24 小时内做一个 10 分钟实验：用你的天赋帮一个人、完成一个小作品，或解决一个具体卡点。" : "In the next 24 hours, run a 10-minute experiment: help someone, make a small artifact, or solve one concrete friction."
+                    }
+                ]
+            };
+        }
+
+        function detectTalentThemes(answers) {
+            const text = answers.map(item => item.answer).join(" ").toLowerCase();
+            const scored = themeRules.map(theme => {
+                const score = theme.keywords.reduce((sum, keyword) => sum + (text.includes(keyword.toLowerCase()) ? 1 : 0), 0);
+                return { ...theme, score };
+            }).sort((a, b) => b.score - a.score);
+            const matched = scored.filter(theme => theme.score > 0);
+            return matched.length ? matched : scored.slice(0, 2);
+        }
+
+        function inferEnergySource(text, zh) {
+            const lower = text.toLowerCase();
+            if (/朋友|家人|团队|聊天|倾听|关系|friend|family|team|listen|relationship/.test(lower)) {
+                return zh ? "关系连接" : "Relationship connection";
+            }
+            if (/完成|推进|目标|任务|finished|goal|task|deliver/.test(lower)) {
+                return zh ? "把事情做成" : "Making things real";
+            }
+            if (/画|写|设计|创作|create|write|design|art/.test(lower)) {
+                return zh ? "自由创造" : "Free creation";
+            }
+            if (/观察|思考|研究|分析|observe|think|research|analyze/.test(lower)) {
+                return zh ? "理解本质" : "Understanding patterns";
+            }
+            return zh ? "靠近真实的自己" : "Being closer to your real self";
+        }
+
+        function getClueTitle(index, zh) {
+            const titles = zh
+                ? ["童年线索", "无意识胜任", "能量回血点", "阴影宝藏"]
+                : ["Childhood clue", "Natural competence", "Energy source", "Shadow gift"];
+            return titles[index];
+        }
+
+        function renderReport(report) {
+            document.getElementById("reportTitle").innerText = report.title;
+            document.getElementById("reportSummary").innerText = report.summary;
+            document.getElementById("coreTalent").innerText = report.coreTalent;
+            document.getElementById("coreTalentText").innerText = report.coreTalentText;
+            document.getElementById("energySource").innerText = report.energySource;
+            document.getElementById("energySourceText").innerText = report.energySourceText;
+            document.getElementById("themePills").innerHTML = report.themes.map(theme => `<span class="theme-pill">${theme}</span>`).join("");
+            document.getElementById("clueCards").innerHTML = report.clues.map(clue => `
+                <div class="glass report-panel p-4 shadow-none">
+                    <p class="text-xs font-black text-slate-400 uppercase">${clue.title}</p>
+                    <p class="font-bold text-slate-600 leading-relaxed mt-2">${escapeHtml(clue.text)}</p>
+                </div>
+            `).join("");
+            document.getElementById("kuaActions").innerHTML = report.kua.map(item => `
+                <div class="glass report-panel p-4 shadow-none">
+                    <p class="font-black">${item.title}</p>
+                    <p class="text-sm text-slate-500 leading-relaxed mt-2">${item.text}</p>
+                </div>
+            `).join("");
+        }
+
+        function showView(viewId) {
+            document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+            document.getElementById(viewId).classList.add("active");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function restartTalentLab() {
+            localStorage.removeItem(TALENT_STATE_KEY);
+            localStorage.removeItem(TALENT_REPORT_KEY);
+            currentStep = 0;
+            talentAnswers = [];
+            lastReport = null;
+            document.getElementById("chatWindow").innerHTML = "";
+            addBubble(i18n[currentLang].intro, "ai");
+            renderStepDots();
+            updateControls();
+            showView("chatView");
+            showToast(i18n[currentLang].reset);
+        }
+
+        function copyReport() {
+            if (!lastReport) return;
+            const text = [
+                lastReport.title,
+                lastReport.summary,
+                `核心天赋 / Core Talent: ${lastReport.coreTalent}`,
+                `能量来源 / Energy Source: ${lastReport.energySource}`,
+                ...lastReport.kua.map(item => `${item.title}: ${item.text}`)
+            ].join("\n\n");
+            navigator.clipboard?.writeText(text);
+            showToast(i18n[currentLang].copied);
+        }
+
+        function showUpgradeMessage() {
+            showToast(i18n[currentLang].upgrade);
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "fixed top-5 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-lg bg-slate-900 text-white text-sm font-black shadow-2xl";
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1800);
+        }
+
+        function escapeHtml(value) {
+            return value
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        document.getElementById("userInput").addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = `${this.scrollHeight}px`;
+        });
+    </script>
+</body>
+</html>

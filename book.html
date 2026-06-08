@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸福之书 | Book of Happiness - HappyKua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&family=Noto+Serif+SC:wght@400;700&display=swap');
+        body { font-family: 'Lexend', 'Noto Serif SC', serif; background: #f4f7f9; }
+        .book-shadow { box-shadow: 20px 20px 60px #d1d9e6, -20px -20px 60px #ffffff; }
+        .rainbow-spine { background: linear-gradient(to bottom, #ff6b6b, #fcc419, #51cf66, #339af0, #845ef7); width: 12px; height: 100%; position: absolute; left: 0; top: 0; border-radius: 4px 0 0 4px; }
+        .lang-hidden { display: none !important; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <nav class="p-6 flex justify-between items-center bg-white/50 backdrop-blur-md">
+        <a href="/lab" class="text-slate-400"><i class="fas fa-chevron-left mr-2"></i>Lab</a>
+        <button onclick="toggleLang()" id="langBtn" class="text-xs font-bold bg-slate-800 text-white px-4 py-1.5 rounded-full transition hover:bg-slate-700">English</button>
+    </nav>
+
+    <main class="flex-1 max-w-5xl mx-auto w-full px-6 py-12">
+        <div class="flex flex-col md:flex-row gap-12 items-center">
+            <!-- 书本封面视觉 -->
+            <div class="relative w-72 h-96 bg-white rounded-r-2xl book-shadow overflow-hidden flex-shrink-0 border border-slate-100">
+                <div class="rainbow-spine"></div>
+                <div class="p-10 flex flex-col h-full justify-between">
+                    <div class="text-xs tracking-[0.2em] text-slate-400 uppercase">Personal Life Manual</div>
+                    <div class="mt-4">
+                        <h2 class="text-3xl font-black text-slate-800 leading-tight">
+                            <span class="lang-zh">幸福<br>之书</span>
+                            <span class="lang-en lang-hidden">THE BOOK<br>OF HAPPY</span>
+                        </h2>
+                        <div class="h-1 w-12 bg-slate-800 mt-4"></div>
+                    </div>
+                    <div class="text-sm font-bold text-slate-400 italic">User: HappyKua_01</div>
+                </div>
+            </div>
+
+            <!-- 内容目录 -->
+            <div class="flex-1">
+                <h1 class="text-3xl font-bold mb-8">
+                    <span class="lang-zh">你的生命档案</span>
+                    <span class="lang-en lang-hidden">Your Life Archives</span>
+                </h1>
+                <div class="space-y-4">
+                    <!-- 章节 1 -->
+                    <div class="bg-white p-6 rounded-2xl flex justify-between items-center hover:bg-slate-50 cursor-pointer transition border border-slate-100">
+                        <div>
+                            <span class="text-[10px] text-red-500 font-bold uppercase tracking-widest">Chapter 01</span>
+                            <h3 class="text-lg font-bold">
+                                <span class="lang-zh">个人天赋使用说明书</span>
+                                <span class="lang-en lang-hidden">Personal Talent Manual</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">12,450 words generated · 2023.10.24</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-300"></i>
+                    </div>
+                    <!-- 章节 2 -->
+                    <div class="bg-white p-6 rounded-2xl flex justify-between items-center hover:bg-slate-50 cursor-pointer transition border border-slate-100">
+                        <div>
+                            <span class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Chapter 02</span>
+                            <h3 class="text-lg font-bold">
+                                <span class="lang-zh">家庭幸福图谱报告</span>
+                                <span class="lang-en lang-hidden">Family Happiness Roadmap</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">Status: Updated 2 days ago</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-300"></i>
+                    </div>
+                    <!-- 章节 3 -->
+                    <div class="bg-white p-6 rounded-2xl flex justify-between items-center hover:bg-slate-50 cursor-pointer transition border border-slate-100 opacity-60">
+                        <div>
+                            <span class="text-[10px] text-green-500 font-bold uppercase tracking-widest">Chapter 03</span>
+                            <h3 class="text-lg font-bold">
+                                <span class="lang-zh">百岁人生健康白皮书</span>
+                                <span class="lang-en lang-hidden">Longevity Health Report</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1 italic">Waiting for more data...</p>
+                        </div>
+                        <i class="fas fa-lock text-slate-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentLang = 'zh';
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
+            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
+            document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
+        }
+    </script>
+</body>
+</html>

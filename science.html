@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科学系统 | Science System - HappyKua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        body { font-family: 'Lexend', 'Noto Sans SC', sans-serif; background: #fcfdfe; }
+        .science-card { background: white; border-radius: 24px; transition: all 0.3s ease; border: 1px solid #eef2f7; }
+        .science-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(51, 154, 240, 0.1); border-color: #339AF0; }
+        .lang-hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <nav class="p-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <div class="flex items-center gap-3">
+            <a href="/lab" class="text-slate-400 hover:text-blue-500"><i class="fas fa-arrow-left"></i></a>
+            <div class="text-xl font-bold tracking-tighter text-blue-600">SCIENCE<span class="text-slate-300 ml-1">LAB</span></div>
+        </div>
+        <button onclick="toggleLang()" class="bg-slate-100 px-4 py-1.5 rounded-full text-xs font-bold">
+            <span id="langBtn">English</span>
+        </button>
+    </nav>
+
+    <header class="max-w-6xl mx-auto py-16 px-6 text-center">
+        <h1 class="text-4xl font-black mb-4">
+            <span class="lang-zh">幸福的科学系统</span>
+            <span class="lang-en lang-hidden">The Science of Happiness</span>
+        </h1>
+        <p class="text-slate-500">
+            <span class="lang-zh">从神经递质到积极心理学，拆解幸福的底层公式。</span>
+            <span class="lang-en lang-hidden">From neurotransmitters to positive psychology, decoding the formulas of well-being.</span>
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pb-24 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- 神经递质模块 -->
+        <div class="science-card p-8">
+            <div class="text-blue-500 text-3xl mb-6"><i class="fas fa-capsules"></i></div>
+            <h3 class="text-xl font-bold mb-4">
+                <span class="lang-zh">快乐四分子</span><span class="lang-en lang-hidden">D.O.S.E.</span>
+            </h3>
+            <ul class="space-y-4 text-sm text-slate-600">
+                <li class="flex justify-between"><span>Dopamine</span><span class="lang-zh">多巴胺/成就感</span><span class="lang-en lang-hidden">Reward</span></li>
+                <li class="flex justify-between"><span>Oxytocin</span><span class="lang-zh">催产素/联结感</span><span class="lang-en lang-hidden">Connection</span></li>
+                <li class="flex justify-between"><span>Serotonin</span><span class="lang-zh">血清素/归属感</span><span class="lang-en lang-hidden">Pride</span></li>
+                <li class="flex justify-between"><span>Endorphin</span><span class="lang-zh">内啡肽/止痛感</span><span class="lang-en lang-hidden">Painkiller</span></li>
+            </ul>
+        </div>
+
+        <!-- PERMA 模型 -->
+        <div class="science-card p-8 border-t-4 border-t-blue-400">
+            <div class="text-blue-400 text-3xl mb-6"><i class="fas fa-project-diagram"></i></div>
+            <h3 class="text-xl font-bold mb-4">
+                <span class="lang-zh">PERMA 模型</span><span class="lang-en lang-hidden">PERMA Model</span>
+            </h3>
+            <p class="text-xs text-slate-400 mb-4 italic">By Martin Seligman</p>
+            <div class="space-y-2">
+                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">P - Positive Emotion (积极情绪)</div>
+                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">E - Engagement (投入/心流)</div>
+                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">R - Relationships (人际关系)</div>
+                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">M - Meaning (意义感)</div>
+                <div class="bg-blue-50 p-2 rounded text-xs text-blue-700">A - Accomplishment (成就)</div>
+            </div>
+        </div>
+
+        <!-- 幸福仪表盘 -->
+        <div class="science-card p-8 bg-slate-900 text-white">
+            <h3 class="text-xl font-bold mb-6">
+                <span class="lang-zh">幸福仪表盘</span><span class="lang-en lang-hidden">My Dashboard</span>
+            </h3>
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-between text-xs mb-2"><span>Sleep / 睡眠</span><span>85%</span></div>
+                    <div class="w-full bg-slate-700 h-1.5 rounded-full"><div class="bg-blue-400 h-full w-[85%] rounded-full"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-2"><span>Social / 社交</span><span>40%</span></div>
+                    <div class="w-full bg-slate-700 h-1.5 rounded-full"><div class="bg-orange-400 h-full w-[40%] rounded-full"></div></div>
+                </div>
+            </div>
+            <button class="w-full mt-8 bg-blue-500 py-3 rounded-xl text-sm font-bold">
+                <span class="lang-zh">同步数据</span><span class="lang-en lang-hidden">Sync Data</span>
+            </button>
+        </div>
+    </main>
+
+    <script>
+        let currentLang = 'zh';
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'en'));
+            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hidden', currentLang === 'zh'));
+            document.getElementById('langBtn').innerText = currentLang === 'zh' ? 'English' : '中文';
+        }
+    </script>
+</body>
+</html>
