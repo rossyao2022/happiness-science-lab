@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 
 const authPath = resolve("auth.js");
 assert.ok(existsSync(authPath), "Missing shared auth.js account system");
+assert.ok(existsSync(resolve("assets/journey-hero-scene.png")), "Missing generated journey hero scene asset");
 
 const auth = readFileSync(authPath, "utf8");
 const pages = {
@@ -65,6 +66,9 @@ const pageContracts = [
   ["home progress panel", pages.home, "happykua-progress-panel"],
   ["home journey hero", pages.home, "journeyHero"],
   ["home journey path", pages.home, "journeyPath"],
+  ["home generated journey art", pages.home, "assets/journey-hero-scene.png"],
+  ["home 3d journey plane", pages.home, "journeyPlane"],
+  ["home floating event orbs", pages.home, "floating-event-orb"],
   ["home avatar", pages.home, "journeyAvatar"],
   ["home event card", pages.home, "journeyEventCard"],
   ["home shop button", pages.home, "openJourneyShop"],

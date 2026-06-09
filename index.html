@@ -100,94 +100,191 @@
             min-height: 540px;
             overflow: hidden;
             background:
-                linear-gradient(180deg, rgba(255, 250, 240, 0.96) 0%, rgba(235, 249, 240, 0.96) 70%, rgba(224, 244, 239, 0.96) 100%);
+                linear-gradient(90deg, rgba(255, 250, 240, 0.12), rgba(255, 250, 240, 0.02)),
+                url('assets/journey-hero-scene.png') center / cover no-repeat;
+            perspective: 1000px;
+            isolation: isolate;
         }
 
         .journey-stage.theme-starRoad {
             background:
-                radial-gradient(circle at 18% 18%, rgba(252, 196, 25, 0.24), transparent 18%),
-                linear-gradient(180deg, #1f3144 0%, #324b67 62%, #e9f5ee 100%);
+                linear-gradient(180deg, rgba(31, 49, 68, 0.22), rgba(21, 33, 49, 0.34)),
+                url('assets/journey-hero-scene.png') center / cover no-repeat;
             color: white;
         }
 
-        .journey-sun {
+        .journey-stage::before {
+            content: "";
             position: absolute;
-            top: 32px;
-            right: 42px;
-            width: 72px;
-            height: 72px;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 66% 34%, rgba(255, 255, 255, 0.24), transparent 20%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(11, 44, 61, 0.12));
+            pointer-events: none;
+        }
+
+        .journey-stage::after {
+            content: "";
+            position: absolute;
+            inset: auto 7% 26px;
+            height: 34px;
             border-radius: 999px;
-            background: radial-gradient(circle at 36% 34%, #fff7c7, #fcc419 62%, #ff922b);
-            box-shadow: 0 0 60px rgba(252, 196, 25, 0.42);
+            background: rgba(15, 23, 42, 0.16);
+            filter: blur(22px);
+            transform: rotate(-3deg);
         }
 
-        .journey-hill {
+        .journey-world {
             position: absolute;
-            left: -8%;
-            right: -8%;
-            bottom: -76px;
-            height: 220px;
-            border-radius: 50% 50% 0 0;
-            background: linear-gradient(180deg, #c7ebcf, #8ed5bf);
+            left: 48%;
+            top: 49%;
+            width: min(500px, 82%);
+            height: 310px;
+            transform-style: preserve-3d;
+            transform: translate(-50%, -50%) rotateX(58deg) rotateZ(-12deg);
+            animation: planeTurn 8s ease-in-out infinite;
         }
 
-        .journey-stage.theme-starRoad .journey-hill {
-            background: linear-gradient(180deg, #506d78, #9fc6bb);
+        @keyframes planeTurn {
+            0%, 100% { transform: translate(-50%, -50%) rotateX(57deg) rotateZ(-13deg) translateY(0); }
+            50% { transform: translate(-50%, -52%) rotateX(61deg) rotateZ(-7deg) translateY(-7px); }
         }
 
-        .journey-path-svg {
+        .journey-plane {
             position: absolute;
-            inset: 80px 34px 64px;
-            width: calc(100% - 68px);
-            height: calc(100% - 144px);
-            overflow: visible;
+            inset: 28px 18px;
+            border-radius: 54% 46% 48% 52% / 46% 45% 55% 54%;
+            background:
+                radial-gradient(circle at 25% 28%, rgba(255, 255, 255, 0.92), transparent 18%),
+                linear-gradient(135deg, rgba(209, 247, 221, 0.98), rgba(141, 214, 190, 0.98));
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.92),
+                0 36px 80px rgba(28, 87, 83, 0.24);
+            overflow: hidden;
         }
 
-        .journey-path-bg {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.78);
-            stroke-width: 20;
-            stroke-linecap: round;
+        .journey-stage.theme-starRoad .journey-plane {
+            background:
+                radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.32), transparent 18%),
+                linear-gradient(135deg, rgba(62, 86, 111, 0.96), rgba(58, 128, 135, 0.96));
         }
 
-        .journey-path-line {
-            fill: none;
-            stroke: #f6be4f;
-            stroke-width: 10;
-            stroke-linecap: round;
-            stroke-dasharray: 12 18;
+        .journey-plane::before {
+            content: "";
+            position: absolute;
+            inset: 32% 8% auto;
+            height: 42%;
+            border-radius: 999px;
+            border-top: 12px dotted rgba(255, 197, 70, 0.9);
+            transform: rotate(-8deg);
+            filter: drop-shadow(0 0 8px rgba(246, 190, 79, 0.48));
+        }
+
+        .journey-plane::after {
+            content: "";
+            position: absolute;
+            left: 9%;
+            right: 9%;
+            bottom: 10%;
+            height: 24%;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            filter: blur(18px);
+        }
+
+        .floating-event-orb {
+            position: absolute;
+            display: grid;
+            place-items: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 999px;
+            background:
+                radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.18) 38%, rgba(252, 196, 25, 0.92) 72%);
+            color: #fff;
+            box-shadow: 0 18px 34px rgba(252, 196, 25, 0.28), 0 0 26px rgba(255, 255, 255, 0.42);
+            transform: translateZ(86px) rotateX(-58deg) rotateZ(12deg);
+            animation: eventFloat 3.2s ease-in-out infinite;
+        }
+
+        .floating-event-orb:nth-child(2) { animation-delay: 0.45s; }
+        .floating-event-orb:nth-child(3) { animation-delay: 0.9s; }
+
+        @keyframes eventFloat {
+            0%, 100% { margin-top: 0; filter: brightness(1); }
+            50% { margin-top: -12px; filter: brightness(1.08); }
         }
 
         .journey-avatar {
             position: absolute;
-            left: 8%;
-            bottom: 130px;
-            width: 86px;
-            height: 112px;
-            transform: translateX(-50%);
+            left: var(--avatar-left, 8%);
+            top: 49%;
+            width: 82px;
+            height: 102px;
+            transform: translate(-50%, -50%) translateZ(108px) rotateX(-58deg) rotateZ(12deg);
+            transform-style: preserve-3d;
             transition: left 0.55s ease;
-            filter: drop-shadow(0 16px 20px rgba(31, 41, 55, 0.18));
+            filter: drop-shadow(0 18px 18px rgba(31, 41, 55, 0.28));
+            animation: avatarBounce 1.6s ease-in-out infinite;
+        }
+
+        @keyframes avatarBounce {
+            0%, 100% { margin-top: 0; }
+            50% { margin-top: -8px; }
         }
 
         .avatar-head {
             position: absolute;
-            top: 0;
-            left: 23px;
-            width: 42px;
-            height: 42px;
+            top: 2px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
             border-radius: 999px;
-            background: #ffd9a5;
+            background:
+                radial-gradient(circle at 36% 24%, #fff5d6, transparent 22%),
+                #ffd7a6;
             border: 4px solid rgba(255, 255, 255, 0.9);
+            box-shadow: inset -5px -7px 0 rgba(220, 133, 91, 0.12);
         }
 
         .avatar-body {
             position: absolute;
             top: 38px;
-            left: 18px;
-            width: 50px;
+            left: 14px;
+            width: 56px;
             height: 56px;
-            border-radius: 24px 24px 18px 18px;
-            background: linear-gradient(135deg, #51cf66, #339af0);
+            border-radius: 999px 999px 24px 24px;
+            background:
+                radial-gradient(circle at 34% 22%, rgba(255,255,255,0.62), transparent 18%),
+                linear-gradient(135deg, #55d39a, #53a9ef);
+            border: 3px solid rgba(255, 255, 255, 0.72);
+        }
+
+        .avatar-body::before,
+        .avatar-body::after {
+            content: "";
+            position: absolute;
+            top: -22px;
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #2b3445;
+        }
+
+        .avatar-body::before { left: 20px; }
+        .avatar-body::after { right: 20px; }
+
+        .avatar-pack {
+            position: absolute;
+            right: 4px;
+            top: 48px;
+            width: 18px;
+            height: 28px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #4dabf7, #1971c2);
+            border: 2px solid rgba(255,255,255,0.76);
         }
 
         .journey-avatar.avatar-sunnyHoodie .avatar-body {
@@ -205,16 +302,16 @@
         .avatar-leg {
             position: absolute;
             bottom: 0;
-            width: 14px;
-            height: 38px;
+            width: 12px;
+            height: 31px;
             border-radius: 999px;
             background: #243143;
             transform-origin: top center;
             animation: stepWalk 0.9s ease-in-out infinite;
         }
 
-        .avatar-leg.left { left: 25px; }
-        .avatar-leg.right { right: 25px; animation-delay: 0.45s; }
+        .avatar-leg.left { left: 24px; }
+        .avatar-leg.right { right: 24px; animation-delay: 0.45s; }
 
         @keyframes stepWalk {
             0%, 100% { transform: rotate(-7deg); }
@@ -236,14 +333,22 @@
 
         .journey-event-card {
             position: absolute;
-            left: 34px;
-            right: 34px;
-            bottom: 30px;
+            left: 28px;
+            right: 28px;
+            bottom: 24px;
             border: 1px solid rgba(30, 41, 59, 0.1);
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.76);
             padding: 16px;
             box-shadow: 0 20px 42px rgba(31, 41, 55, 0.12);
+            backdrop-filter: blur(18px);
+            transform: translateY(0);
+            animation: cardHover 4s ease-in-out infinite;
+        }
+
+        @keyframes cardHover {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
         }
 
         .journey-shop {
@@ -364,20 +469,18 @@
         </div>
 
         <div id="journeyPath" class="journey-panel journey-stage theme-grassRoad">
-            <div class="journey-sun"></div>
-            <div class="journey-hill"></div>
-            <svg class="journey-path-svg" viewBox="0 0 640 360" aria-hidden="true">
-                <path class="journey-path-bg" d="M40 292 C132 210 176 296 264 226 C350 158 402 210 478 130 C535 70 580 82 608 46"></path>
-                <path class="journey-path-line" d="M40 292 C132 210 176 296 264 226 C350 158 402 210 478 130 C535 70 580 82 608 46"></path>
-            </svg>
-            <span class="journey-node" style="left: 12%; bottom: 184px;"><i class="fas fa-leaf"></i></span>
-            <span class="journey-node" style="left: 42%; bottom: 235px;"><i class="fas fa-star"></i></span>
-            <span class="journey-node" style="left: 72%; bottom: 310px;"><i class="fas fa-heart"></i></span>
-            <div id="journeyAvatar" class="journey-avatar avatar-defaultAvatar">
-                <span class="avatar-head"></span>
-                <span class="avatar-body"></span>
-                <span class="avatar-leg left"></span>
-                <span class="avatar-leg right"></span>
+            <div id="journeyPlane" class="journey-world" aria-hidden="true">
+                <div class="journey-plane"></div>
+                <span class="floating-event-orb" style="left: 62%; top: 22%;"><i class="fas fa-heart"></i></span>
+                <span class="floating-event-orb" style="left: 42%; top: 40%;"><i class="fas fa-star"></i></span>
+                <span class="floating-event-orb" style="left: 75%; top: 48%;"><i class="fas fa-seedling"></i></span>
+                <div id="journeyAvatar" class="journey-avatar avatar-defaultAvatar">
+                    <span class="avatar-head"></span>
+                    <span class="avatar-body"></span>
+                    <span class="avatar-pack"></span>
+                    <span class="avatar-leg left"></span>
+                    <span class="avatar-leg right"></span>
+                </div>
             </div>
             <article id="journeyEventCard" class="journey-event-card">
                 <p class="text-xs font-black uppercase tracking-widest text-orange-500">Today's Event</p>
@@ -563,7 +666,7 @@
             document.querySelector('[data-economy-field="level"]').textContent = economy.level;
             document.querySelector('[data-economy-field="vipMinutes"]').textContent = economy.vipMinutes;
 
-            avatar.style.left = `${journey.avatarPosition}%`;
+            avatar.style.setProperty("--avatar-left", `${journey.avatarPosition}%`);
             avatar.className = `journey-avatar avatar-${economy.equippedCosmetics.avatar || "defaultAvatar"}`;
             path.classList.remove("theme-grassRoad", "theme-starRoad");
             path.classList.add(`theme-${economy.equippedCosmetics.road || "grassRoad"}`);
