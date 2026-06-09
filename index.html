@@ -42,6 +42,254 @@
         .rainbow-shadow-7:hover { box-shadow: 0 15px 30px -10px var(--rainbow-7); }
         .rainbow-shadow-8:hover { box-shadow: 0 15px 30px -10px var(--rainbow-8); }
 
+        .journey-hero {
+            width: min(1180px, calc(100% - 32px));
+            margin: 28px auto 44px;
+            display: grid;
+            grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        .journey-panel {
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.86);
+            box-shadow: 0 24px 60px rgba(31, 41, 55, 0.09);
+            backdrop-filter: blur(18px);
+        }
+
+        .journey-copy {
+            padding: clamp(22px, 4vw, 46px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 540px;
+        }
+
+        .journey-title {
+            color: #243143;
+            font-size: clamp(42px, 6vw, 76px);
+            line-height: 0.94;
+            letter-spacing: 0;
+        }
+
+        .journey-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .journey-stat {
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.74);
+            padding: 14px;
+        }
+
+        .journey-stat strong {
+            display: block;
+            color: #1f2937;
+            font-size: clamp(20px, 3vw, 30px);
+            line-height: 1;
+        }
+
+        .journey-stage {
+            position: relative;
+            min-height: 540px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255, 250, 240, 0.96) 0%, rgba(235, 249, 240, 0.96) 70%, rgba(224, 244, 239, 0.96) 100%);
+        }
+
+        .journey-stage.theme-starRoad {
+            background:
+                radial-gradient(circle at 18% 18%, rgba(252, 196, 25, 0.24), transparent 18%),
+                linear-gradient(180deg, #1f3144 0%, #324b67 62%, #e9f5ee 100%);
+            color: white;
+        }
+
+        .journey-sun {
+            position: absolute;
+            top: 32px;
+            right: 42px;
+            width: 72px;
+            height: 72px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 36% 34%, #fff7c7, #fcc419 62%, #ff922b);
+            box-shadow: 0 0 60px rgba(252, 196, 25, 0.42);
+        }
+
+        .journey-hill {
+            position: absolute;
+            left: -8%;
+            right: -8%;
+            bottom: -76px;
+            height: 220px;
+            border-radius: 50% 50% 0 0;
+            background: linear-gradient(180deg, #c7ebcf, #8ed5bf);
+        }
+
+        .journey-stage.theme-starRoad .journey-hill {
+            background: linear-gradient(180deg, #506d78, #9fc6bb);
+        }
+
+        .journey-path-svg {
+            position: absolute;
+            inset: 80px 34px 64px;
+            width: calc(100% - 68px);
+            height: calc(100% - 144px);
+            overflow: visible;
+        }
+
+        .journey-path-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.78);
+            stroke-width: 20;
+            stroke-linecap: round;
+        }
+
+        .journey-path-line {
+            fill: none;
+            stroke: #f6be4f;
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 12 18;
+        }
+
+        .journey-avatar {
+            position: absolute;
+            left: 8%;
+            bottom: 130px;
+            width: 86px;
+            height: 112px;
+            transform: translateX(-50%);
+            transition: left 0.55s ease;
+            filter: drop-shadow(0 16px 20px rgba(31, 41, 55, 0.18));
+        }
+
+        .avatar-head {
+            position: absolute;
+            top: 0;
+            left: 23px;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            background: #ffd9a5;
+            border: 4px solid rgba(255, 255, 255, 0.9);
+        }
+
+        .avatar-body {
+            position: absolute;
+            top: 38px;
+            left: 18px;
+            width: 50px;
+            height: 56px;
+            border-radius: 24px 24px 18px 18px;
+            background: linear-gradient(135deg, #51cf66, #339af0);
+        }
+
+        .journey-avatar.avatar-sunnyHoodie .avatar-body {
+            background: linear-gradient(135deg, #ff922b, #fcc419);
+        }
+
+        .journey-avatar.avatar-sproutCape .avatar-body {
+            background: linear-gradient(135deg, #2f9e44, #69db7c);
+        }
+
+        .journey-avatar.avatar-rainbowBackpack .avatar-body {
+            background: linear-gradient(135deg, #ff6b6b, #fcc419, #51cf66, #339af0);
+        }
+
+        .avatar-leg {
+            position: absolute;
+            bottom: 0;
+            width: 14px;
+            height: 38px;
+            border-radius: 999px;
+            background: #243143;
+            transform-origin: top center;
+            animation: stepWalk 0.9s ease-in-out infinite;
+        }
+
+        .avatar-leg.left { left: 25px; }
+        .avatar-leg.right { right: 25px; animation-delay: 0.45s; }
+
+        @keyframes stepWalk {
+            0%, 100% { transform: rotate(-7deg); }
+            50% { transform: rotate(9deg); }
+        }
+
+        .journey-node {
+            position: absolute;
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            color: #339af0;
+            border: 1px solid rgba(30, 41, 59, 0.12);
+            box-shadow: 0 12px 28px rgba(31, 41, 55, 0.12);
+        }
+
+        .journey-event-card {
+            position: absolute;
+            left: 34px;
+            right: 34px;
+            bottom: 30px;
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.88);
+            padding: 16px;
+            box-shadow: 0 20px 42px rgba(31, 41, 55, 0.12);
+        }
+
+        .journey-shop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(15, 23, 42, 0.42);
+        }
+
+        .journey-shop.is-open { display: flex; }
+
+        .journey-shop-panel {
+            width: min(920px, 100%);
+            max-height: min(760px, calc(100vh - 36px));
+            overflow: auto;
+            border-radius: 8px;
+            background: #fffaf0;
+            border: 1px solid rgba(30, 41, 59, 0.12);
+            box-shadow: 0 30px 70px rgba(15, 23, 42, 0.26);
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .shop-item {
+            border: 1px solid rgba(30, 41, 59, 0.12);
+            border-radius: 8px;
+            background: white;
+            padding: 14px;
+            text-align: left;
+        }
+
+        @media (max-width: 900px) {
+            .journey-hero { grid-template-columns: 1fr; }
+            .journey-copy { min-height: auto; }
+            .journey-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .shop-grid { grid-template-columns: 1fr; }
+        }
+
         .lang-hidden { display: none !important; }
         
         .floating { animation: floating 3s ease-in-out infinite; }
@@ -70,22 +318,100 @@
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="max-w-6xl mx-auto pt-20 pb-16 px-6 text-center">
-        <h1 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
-            <span class="lang-zh">幸福实验室</span>
-            <span class="lang-en lang-hidden">Happiness Lab</span>
-        </h1>
-        <p class="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">
-            <span class="lang-zh">基于 <b>KUA (知、联、行)</b> 理念，让幸福从感性心法走向科学实践。</span>
-            <span class="lang-en lang-hidden">Based on the <b>KUA (K-Knowledge, U-Union, A-Action)</b> philosophy, transforming happiness from intuition into science.</span>
-        </p>
-    </header>
+    <section id="journeyHero" class="journey-hero" aria-label="幸福成长旅程">
+        <div class="journey-panel journey-copy">
+            <div>
+                <p class="text-xs font-black uppercase tracking-[0.22em] text-orange-500">HappyKua Journey</p>
+                <h1 class="journey-title font-extrabold mt-4">
+                    <span class="lang-zh">沿着幸福小路，做一点真实行动。</span>
+                    <span class="lang-en lang-hidden">Walk the happiness path through real tiny actions.</span>
+                </h1>
+                <p class="text-lg text-slate-500 leading-relaxed mt-6">
+                    <span class="lang-zh">每一次练习、阅读、抽卡和生成报告，都会让小人前进一步，收集幸福币，遇见新的幸福事件。</span>
+                    <span class="lang-en lang-hidden">Every practice, reading, card draw, and report moves your traveler forward with coins and gentle events.</span>
+                </p>
+            </div>
+
+            <div>
+                <div class="journey-stat-grid" aria-label="幸福旅程状态">
+                    <div class="journey-stat">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">幸福币</span>
+                        <strong data-economy-field="coins">0</strong>
+                    </div>
+                    <div class="journey-stat">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">幸福度</span>
+                        <strong data-economy-field="happiness">0</strong>
+                    </div>
+                    <div class="journey-stat">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">等级</span>
+                        <strong data-economy-field="level">1</strong>
+                    </div>
+                    <div class="journey-stat">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">VIP</span>
+                        <strong><span data-economy-field="vipMinutes">0</span><small class="text-sm text-slate-400 ml-1">min</small></strong>
+                    </div>
+                </div>
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="openJourneyShop" data-action="open-journey-shop" onclick="openJourneyShop()" class="bg-slate-900 text-white px-5 py-3 rounded-lg font-black text-sm">
+                        <i class="fas fa-store mr-2"></i>幸福商店
+                    </button>
+                    <a href="#labModules" class="bg-white/80 text-slate-700 px-5 py-3 rounded-lg font-black text-sm border border-slate-200">
+                        <i class="fas fa-compass mr-2"></i>进入实验室
+                    </a>
+                </div>
+                <p id="journeyShopStatus" class="text-sm font-bold text-slate-500 mt-3" role="status"></p>
+            </div>
+        </div>
+
+        <div id="journeyPath" class="journey-panel journey-stage theme-grassRoad">
+            <div class="journey-sun"></div>
+            <div class="journey-hill"></div>
+            <svg class="journey-path-svg" viewBox="0 0 640 360" aria-hidden="true">
+                <path class="journey-path-bg" d="M40 292 C132 210 176 296 264 226 C350 158 402 210 478 130 C535 70 580 82 608 46"></path>
+                <path class="journey-path-line" d="M40 292 C132 210 176 296 264 226 C350 158 402 210 478 130 C535 70 580 82 608 46"></path>
+            </svg>
+            <span class="journey-node" style="left: 12%; bottom: 184px;"><i class="fas fa-leaf"></i></span>
+            <span class="journey-node" style="left: 42%; bottom: 235px;"><i class="fas fa-star"></i></span>
+            <span class="journey-node" style="left: 72%; bottom: 310px;"><i class="fas fa-heart"></i></span>
+            <div id="journeyAvatar" class="journey-avatar avatar-defaultAvatar">
+                <span class="avatar-head"></span>
+                <span class="avatar-body"></span>
+                <span class="avatar-leg left"></span>
+                <span class="avatar-leg right"></span>
+            </div>
+            <article id="journeyEventCard" class="journey-event-card">
+                <p class="text-xs font-black uppercase tracking-widest text-orange-500">Today's Event</p>
+                <h2 class="font-black text-xl mt-1" data-event-field="title">旅程开始</h2>
+                <p class="text-sm text-slate-500 leading-relaxed mt-2" data-event-field="copy">登录或继续练习，小人会在路上遇见新的幸福事件。</p>
+                <p class="text-xs font-black text-slate-400 mt-3" data-event-field="reward">等待第一个行动</p>
+            </article>
+        </div>
+    </section>
+
+    <div id="journeyShop" class="journey-shop" aria-label="幸福商店">
+        <div class="journey-shop-panel">
+            <div class="p-5 flex items-start justify-between gap-4 border-b border-slate-200">
+                <div>
+                    <p class="text-xs font-black uppercase tracking-widest text-orange-500">Happiness Shop</p>
+                    <h2 class="text-2xl font-black text-slate-800 mt-1">幸福商店</h2>
+                    <p class="text-sm text-slate-500 mt-1">用幸福币购买外观、路线主题和 VIP 问答时长。</p>
+                </div>
+                <button onclick="closeJourneyShop()" class="w-10 h-10 rounded-lg bg-white border border-slate-200 text-slate-500" aria-label="Close shop">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="journeyShopItems" class="shop-grid p-5"></div>
+        </div>
+    </div>
 
     <section class="max-w-6xl mx-auto px-6 pb-10" data-happykua-progress-panel></section>
 
     <!-- 实验模块网格 -->
-    <main class="max-w-6xl mx-auto px-6 pb-32">
+    <main id="labModules" class="max-w-6xl mx-auto px-6 pb-32">
+        <div class="mb-8">
+            <p class="text-sm font-black uppercase tracking-widest text-slate-400">Lab Modules</p>
+            <h2 class="text-3xl font-black text-slate-800 mt-2">幸福实验室功能</h2>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             
             <!-- 1. 天赋发现 (Pink/Red) -->
@@ -206,6 +532,126 @@
     <script src="auth.js"></script>
     <script>
         let currentLang = 'zh';
+
+        function escapeHtmlLocal(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function awardDailyCheckIn() {
+            window.HappyKuaAuth?.awardHappinessAction("dailyCheckIn", {
+                moduleId: "journey"
+            });
+        }
+
+        function renderJourneyHero() {
+            const auth = window.HappyKuaAuth;
+            if (!auth) return;
+
+            const journey = auth.getJourneyState();
+            const economy = journey.economy;
+            const avatar = document.getElementById("journeyAvatar");
+            const path = document.getElementById("journeyPath");
+            const latestEvent = journey.latestEvent;
+
+            document.querySelector('[data-economy-field="coins"]').textContent = economy.coins;
+            document.querySelector('[data-economy-field="happiness"]').textContent = economy.happiness;
+            document.querySelector('[data-economy-field="level"]').textContent = economy.level;
+            document.querySelector('[data-economy-field="vipMinutes"]').textContent = economy.vipMinutes;
+
+            avatar.style.left = `${journey.avatarPosition}%`;
+            avatar.className = `journey-avatar avatar-${economy.equippedCosmetics.avatar || "defaultAvatar"}`;
+            path.classList.remove("theme-grassRoad", "theme-starRoad");
+            path.classList.add(`theme-${economy.equippedCosmetics.road || "grassRoad"}`);
+
+            document.querySelector('[data-event-field="title"]').textContent = latestEvent?.title || "旅程开始";
+            document.querySelector('[data-event-field="copy"]').textContent = latestEvent?.copy || "登录或继续练习，小人会在路上遇见新的幸福事件。";
+            document.querySelector('[data-event-field="reward"]').textContent = latestEvent
+                ? `+${latestEvent.coins} 幸福币 · +${latestEvent.happiness} 幸福度`
+                : "等待第一个行动";
+
+            renderJourneyShop();
+        }
+
+        function renderJourneyShop() {
+            const auth = window.HappyKuaAuth;
+            if (!auth) return;
+
+            const journey = auth.getJourneyState();
+            const economy = journey.economy;
+            const items = journey.shopItems;
+            const itemIcons = {
+                sunnyHoodie: "fa-shirt",
+                sproutCape: "fa-seedling",
+                rainbowBackpack: "fa-rainbow",
+                grassRoad: "fa-road",
+                starRoad: "fa-star",
+                vip15: "fa-clock",
+                vip60: "fa-gem"
+            };
+
+            document.getElementById("journeyShopItems").innerHTML = items.map((item) => {
+                const owned = economy.ownedCosmetics.includes(item.id);
+                const equipped = item.type === "cosmetic" && economy.equippedCosmetics[item.category] === item.id;
+                const affordable = economy.coins >= item.price;
+                const actionText = item.type === "vip"
+                    ? "购买时长"
+                    : equipped
+                        ? "已装备"
+                        : owned
+                            ? "装备"
+                            : "购买";
+
+                return `
+                    <button class="shop-item" data-shop-item="${item.id}" onclick="purchaseJourneyItem('${item.id}')" ${!owned && !affordable ? "aria-disabled=\"true\"" : ""}>
+                        <div class="flex items-start gap-3">
+                            <div class="w-11 h-11 rounded-lg bg-orange-100 text-orange-500 grid place-items-center shrink-0">
+                                <i class="fas ${itemIcons[item.id] || "fa-gift"}"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-black text-slate-800">${escapeHtmlLocal(item.label)}</p>
+                                <p class="text-xs text-slate-500 leading-relaxed mt-1">${escapeHtmlLocal(item.description)}</p>
+                                <div class="mt-3 flex items-center justify-between gap-3">
+                                    <span class="text-sm font-black text-orange-500">${item.price} 幸福币</span>
+                                    <span class="text-xs font-black ${owned || affordable ? "text-slate-700" : "text-slate-300"}">${actionText}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                `;
+            }).join("");
+        }
+
+        function openJourneyShop() {
+            renderJourneyShop();
+            document.getElementById("journeyShop").classList.add("is-open");
+        }
+
+        function closeJourneyShop() {
+            document.getElementById("journeyShop").classList.remove("is-open");
+        }
+
+        function purchaseJourneyItem(itemId) {
+            const result = window.HappyKuaAuth?.purchaseShopItem(itemId);
+            const status = document.getElementById("journeyShopStatus");
+            if (!result) return;
+
+            if (result.purchased) {
+                status.textContent = `已兑换：${result.item.label}`;
+            } else if (result.reason === "already-owned") {
+                status.textContent = `已装备：${result.item.label}`;
+            } else if (result.reason === "insufficient-coins") {
+                status.textContent = `幸福币还不够兑换：${result.item.label}`;
+            } else {
+                status.textContent = "这个商品暂时不可用";
+            }
+            renderJourneyHero();
+        }
+
         function toggleLang() {
             const zhElements = document.querySelectorAll('.lang-zh');
             const enElements = document.querySelectorAll('.lang-en');
@@ -223,6 +669,17 @@
                 currentLang = 'zh';
             }
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            awardDailyCheckIn();
+            renderJourneyHero();
+        });
+        window.addEventListener("happykua:user-changed", () => {
+            awardDailyCheckIn();
+            renderJourneyHero();
+        });
+        window.addEventListener("happykua:economy-changed", renderJourneyHero);
+        window.addEventListener("happykua:data-changed", renderJourneyHero);
     </script>
 </body>
 </html>

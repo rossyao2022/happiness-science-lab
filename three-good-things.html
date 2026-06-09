@@ -817,6 +817,9 @@
                 savedAt: new Date().toISOString()
             });
             writeRecords(nextRecords);
+            window.HappyKuaAuth?.awardHappinessAction("threeGoodThingsSaved", {
+                moduleId: "threeGoodThings"
+            });
             showToast(texts[currentLang].saved);
             renderToday();
             renderGarden();

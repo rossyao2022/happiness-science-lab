@@ -95,8 +95,110 @@
         }
     ];
 
+    const happinessEvents = [
+        {
+            id: "gratitudeBridge",
+            title: "感谢之桥",
+            copy: "你把一件小好事认真收下，心里的路又亮了一格。"
+        },
+        {
+            id: "bodyPause",
+            title: "身体小憩",
+            copy: "你停下来照顾自己，幸福不是冲刺，是会呼吸的节奏。"
+        },
+        {
+            id: "braveStep",
+            title: "勇气一步",
+            copy: "你完成了一个真实行动，小小一步也会把世界推开。"
+        },
+        {
+            id: "knowledgeLight",
+            title: "知识微光",
+            copy: "新的理解正在变成路标，知道之后，做到会更容易。"
+        },
+        {
+            id: "familyLamp",
+            title: "家庭暖灯",
+            copy: "当关系被认真看见，家里会多一盏可以回来的灯。"
+        }
+    ];
+
+    const rewardRules = {
+        dailyCheckIn: { label: "每日旅程签到", coins: 10, happiness: 5, daily: true },
+        threeGoodThingsSaved: { label: "完成三件好事", coins: 35, happiness: 25, daily: true },
+        talentReportGenerated: { label: "生成天赋报告", coins: 60, happiness: 40, daily: false },
+        familyReportGenerated: { label: "生成家庭方案", coins: 60, happiness: 40, daily: false },
+        scienceVisit: { label: "进入科学系统", coins: 10, happiness: 8, daily: true },
+        cardDraw: { label: "幸福卡牌抽卡", coins: 8, happiness: 5, daily: true, dailyLimit: 3 },
+        life100GuideGenerated: { label: "生成百岁指南", coins: 12, happiness: 8, daily: true },
+        bookOpened: { label: "打开幸福之书", coins: 8, happiness: 5, daily: true }
+    };
+
+    const shopItems = [
+        {
+            id: "sunnyHoodie",
+            type: "cosmetic",
+            category: "avatar",
+            label: "阳光帽衫",
+            description: "给路上的小人换一件暖暖的帽衫。",
+            price: 80
+        },
+        {
+            id: "sproutCape",
+            type: "cosmetic",
+            category: "avatar",
+            label: "小芽披风",
+            description: "每一步都像有一片新叶在背后长出来。",
+            price: 120
+        },
+        {
+            id: "rainbowBackpack",
+            type: "cosmetic",
+            category: "avatar",
+            label: "彩虹背包",
+            description: "把今天收集到的光，背在身上继续走。",
+            price: 160
+        },
+        {
+            id: "grassRoad",
+            type: "cosmetic",
+            category: "road",
+            label: "草地路",
+            description: "让幸福旅程变成柔软的绿色小径。",
+            price: 100
+        },
+        {
+            id: "starRoad",
+            type: "cosmetic",
+            category: "road",
+            label: "星光夜路",
+            description: "夜里也能看见前进方向的星光路线。",
+            price: 150
+        },
+        {
+            id: "vip15",
+            type: "vip",
+            label: "VIP 问答 15 分钟",
+            description: "购买后增加 15 分钟 VIP 问答权益余额。",
+            price: 200,
+            minutes: 15
+        },
+        {
+            id: "vip60",
+            type: "vip",
+            label: "VIP 问答 60 分钟",
+            description: "购买后增加 60 分钟 VIP 问答权益余额。",
+            price: 650,
+            minutes: 60
+        }
+    ];
+
     function now() {
         return new Date().toISOString();
+    }
+
+    function todayKey() {
+        return new Date().toISOString().slice(0, 10);
     }
 
     function safeParse(value, fallback) {
@@ -172,9 +274,53 @@
                 email: user.email || ""
             },
             modules: {},
+            economy: defaultEconomyState(),
             activity: [],
             createdAt: now(),
             updatedAt: now()
+        };
+    }
+
+    function defaultEconomyState() {
+        return {
+            coins: 0,
+            happiness: 0,
+            level: 1,
+            vipMinutes: 0,
+            ownedCosmetics: ["defaultAvatar", "defaultRoad"],
+            equippedCosmetics: {
+                avatar: "defaultAvatar",
+                road: "defaultRoad"
+            },
+            rewardLedger: {},
+            eventLog: []
+        };
+    }
+
+    function normalizeEconomyState(economy) {
+        const defaults = defaultEconomyState();
+        const nextEconomy = economy && typeof economy === "object" ? economy : {};
+        const happiness = Math.max(0, Number(nextEconomy.happiness || 0));
+        const ownedCosmetics = Array.isArray(nextEconomy.ownedCosmetics)
+            ? Array.from(new Set([...defaults.ownedCosmetics, ...nextEconomy.ownedCosmetics]))
+            : defaults.ownedCosmetics;
+
+        return {
+            ...defaults,
+            ...nextEconomy,
+            coins: Math.max(0, Number(nextEconomy.coins || 0)),
+            happiness,
+            level: Math.max(1, Math.floor(happiness / 100) + 1),
+            vipMinutes: Math.max(0, Number(nextEconomy.vipMinutes || 0)),
+            ownedCosmetics,
+            equippedCosmetics: {
+                ...defaults.equippedCosmetics,
+                ...(nextEconomy.equippedCosmetics || {})
+            },
+            rewardLedger: nextEconomy.rewardLedger && typeof nextEconomy.rewardLedger === "object"
+                ? nextEconomy.rewardLedger
+                : {},
+            eventLog: Array.isArray(nextEconomy.eventLog) ? nextEconomy.eventLog : []
         };
     }
 
@@ -187,6 +333,7 @@
             email: shaped.profile?.email || user.email || ""
         };
         shaped.modules = shaped.modules && typeof shaped.modules === "object" ? shaped.modules : {};
+        shaped.economy = normalizeEconomyState(shaped.economy);
         shaped.activity = Array.isArray(shaped.activity) ? shaped.activity : [];
         shaped.createdAt = shaped.createdAt || now();
         shaped.updatedAt = shaped.updatedAt || now();
@@ -204,10 +351,190 @@
     function saveUserData(data) {
         const nextData = {
             ...data,
+            economy: normalizeEconomyState(data.economy),
             updatedAt: now()
         };
         localStorage.setItem(dataKey(nextData.userId), JSON.stringify(nextData));
         return nextData;
+    }
+
+    function getEconomyState(userId = getCurrentUser().id) {
+        return normalizeEconomyState(getUserData(userId).economy);
+    }
+
+    function getShopItem(itemId) {
+        return shopItems.find((item) => item.id === itemId) || null;
+    }
+
+    function getRewardRule(actionId, payload = {}) {
+        const rule = rewardRules[actionId] || {};
+        return {
+            label: payload.label || rule.label || actionId,
+            coins: Number(payload.coins ?? rule.coins ?? 0),
+            happiness: Number(payload.happiness ?? rule.happiness ?? 0),
+            daily: payload.daily ?? rule.daily ?? true,
+            dailyLimit: Number(payload.dailyLimit ?? rule.dailyLimit ?? 1)
+        };
+    }
+
+    function rewardLedgerKey(actionId, reward) {
+        return reward.daily ? `${actionId}:${todayKey()}` : actionId;
+    }
+
+    function pickHappinessEvent(actionId, eventLog) {
+        const knownEventMap = {
+            threeGoodThingsSaved: "gratitudeBridge",
+            scienceVisit: "knowledgeLight",
+            familyReportGenerated: "familyLamp",
+            cardDraw: "braveStep",
+            life100GuideGenerated: "knowledgeLight",
+            bookOpened: "bodyPause"
+        };
+        const preferred = happinessEvents.find((event) => event.id === knownEventMap[actionId]);
+        if (preferred) return preferred;
+        return happinessEvents[eventLog.length % happinessEvents.length];
+    }
+
+    function awardHappinessAction(actionId, payload = {}) {
+        const reward = getRewardRule(actionId, payload);
+        const user = getCurrentUser();
+        const data = getUserData(user.id);
+        const economy = normalizeEconomyState(data.economy);
+        const ledgerKey = rewardLedgerKey(actionId, reward);
+        const currentCount = Number(economy.rewardLedger[ledgerKey] || 0);
+        const dailyLimit = Math.max(1, reward.dailyLimit || 1);
+
+        if (currentCount >= dailyLimit) {
+            return {
+                awarded: false,
+                reason: "already-awarded",
+                actionId,
+                economy
+            };
+        }
+
+        const event = pickHappinessEvent(actionId, economy.eventLog);
+        const rewardEvent = {
+            id: `${event.id}-${Date.now()}`,
+            eventId: event.id,
+            title: payload.eventTitle || event.title,
+            copy: payload.eventCopy || event.copy,
+            actionId,
+            label: reward.label,
+            coins: reward.coins,
+            happiness: reward.happiness,
+            at: now()
+        };
+
+        economy.coins += Math.max(0, reward.coins);
+        economy.happiness += Math.max(0, reward.happiness);
+        economy.level = Math.max(1, Math.floor(economy.happiness / 100) + 1);
+        economy.rewardLedger[ledgerKey] = currentCount + 1;
+        economy.eventLog = [rewardEvent, ...economy.eventLog].slice(0, 24);
+
+        data.economy = economy;
+        data.activity = [
+            {
+                moduleId: payload.moduleId || actionId,
+                type: "economy-awarded",
+                at: now()
+            },
+            ...data.activity
+        ].slice(0, 80);
+
+        const saved = saveUserData(data);
+        emitEconomyChange("award", rewardEvent);
+        return {
+            awarded: true,
+            actionId,
+            event: rewardEvent,
+            economy: saved.economy
+        };
+    }
+
+    function purchaseShopItem(itemId) {
+        const item = getShopItem(itemId);
+        if (!item) {
+            return { purchased: false, reason: "missing-item", itemId, economy: getEconomyState() };
+        }
+
+        const user = getCurrentUser();
+        const data = getUserData(user.id);
+        const economy = normalizeEconomyState(data.economy);
+        const alreadyOwned = item.type === "cosmetic" && economy.ownedCosmetics.includes(item.id);
+
+        if (alreadyOwned) {
+            economy.equippedCosmetics[item.category] = item.id;
+            data.economy = economy;
+            const saved = saveUserData(data);
+            emitEconomyChange("equip", { item });
+            return { purchased: false, reason: "already-owned", item, economy: saved.economy };
+        }
+
+        if (economy.coins < item.price) {
+            return { purchased: false, reason: "insufficient-coins", item, economy };
+        }
+
+        economy.coins -= item.price;
+        if (item.type === "vip") {
+            economy.vipMinutes += item.minutes;
+        } else {
+            economy.ownedCosmetics = Array.from(new Set([...economy.ownedCosmetics, item.id]));
+            economy.equippedCosmetics[item.category] = item.id;
+        }
+
+        data.economy = economy;
+        data.activity = [
+            {
+                moduleId: "shop",
+                type: "shop-purchase",
+                at: now()
+            },
+            ...data.activity
+        ].slice(0, 80);
+
+        const saved = saveUserData(data);
+        emitEconomyChange("purchase", { item });
+        return { purchased: true, item, economy: saved.economy };
+    }
+
+    function equipCosmetic(itemId) {
+        const item = getShopItem(itemId);
+        const economy = getEconomyState();
+        if (!item || item.type !== "cosmetic") {
+            return { equipped: false, reason: "missing-cosmetic", itemId, economy };
+        }
+        if (!economy.ownedCosmetics.includes(item.id)) {
+            return { equipped: false, reason: "not-owned", item, economy };
+        }
+
+        const user = getCurrentUser();
+        const data = getUserData(user.id);
+        data.economy = {
+            ...economy,
+            equippedCosmetics: {
+                ...economy.equippedCosmetics,
+                [item.category]: item.id
+            }
+        };
+        const saved = saveUserData(data);
+        emitEconomyChange("equip", { item });
+        return { equipped: true, item, economy: saved.economy };
+    }
+
+    function getJourneyState(userId = getCurrentUser().id) {
+        const economy = getEconomyState(userId);
+        const latestEvent = economy.eventLog[0] || null;
+        const progressInLevel = economy.happiness % 100;
+        const avatarPosition = Math.min(92, 8 + progressInLevel * 0.84);
+        return {
+            economy,
+            latestEvent,
+            avatarPosition,
+            levelProgress: progressInLevel,
+            nextLevelAt: economy.level * 100,
+            shopItems
+        };
     }
 
     function getModuleData(moduleId, userId = getCurrentUser().id) {
@@ -302,6 +629,30 @@
             }
         }
 
+        if (guestData.economy && !targetData.economyImportedAt) {
+            const targetEconomy = normalizeEconomyState(targetData.economy);
+            const guestEconomy = normalizeEconomyState(guestData.economy);
+            targetData.economy = {
+                ...targetEconomy,
+                coins: Math.max(targetEconomy.coins, guestEconomy.coins),
+                happiness: Math.max(targetEconomy.happiness, guestEconomy.happiness),
+                level: Math.max(targetEconomy.level, guestEconomy.level),
+                vipMinutes: Math.max(targetEconomy.vipMinutes, guestEconomy.vipMinutes),
+                ownedCosmetics: Array.from(new Set([...targetEconomy.ownedCosmetics, ...guestEconomy.ownedCosmetics])),
+                equippedCosmetics: {
+                    ...targetEconomy.equippedCosmetics,
+                    ...guestEconomy.equippedCosmetics
+                },
+                rewardLedger: {
+                    ...targetEconomy.rewardLedger,
+                    ...guestEconomy.rewardLedger
+                },
+                eventLog: [...guestEconomy.eventLog, ...targetEconomy.eventLog].slice(0, 24)
+            };
+            targetData.economyImportedAt = now();
+            changed = true;
+        }
+
         if (changed) {
             targetData.guestImportedAt = now();
             saveUserData(targetData);
@@ -351,6 +702,7 @@
 
     function getProgressSummary(userId = getCurrentUser().id) {
         const data = getUserData(userId);
+        const economy = normalizeEconomyState(data.economy);
         const modules = moduleDefinitions.map((definition) => {
             const moduleData = data.modules[definition.id] || {};
             const complete = definition.isComplete(moduleData);
@@ -367,6 +719,7 @@
         const completedCount = modules.filter((item) => item.complete).length;
         return {
             user: getCurrentUser(),
+            economy,
             completedCount,
             totalCount: modules.length,
             percent: Math.round((completedCount / modules.length) * 100),
@@ -628,6 +981,20 @@
                 <p class="hkua-panel-copy">
                     ${escapeHtml(user.isGuest ? "登录后，这台设备上的练习、报告和进度会归到你的个人档案。" : `已记录 ${summary.completedCount}/${summary.totalCount} 个模块进度。`)}
                 </p>
+                <div class="hkua-progress-list" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="hkua-progress-row" style="grid-template-columns: 1fr;">
+                        <p class="hkua-progress-name">幸福币</p>
+                        <p class="hkua-progress-status">${summary.economy.coins}</p>
+                    </div>
+                    <div class="hkua-progress-row" style="grid-template-columns: 1fr;">
+                        <p class="hkua-progress-name">幸福度</p>
+                        <p class="hkua-progress-status">${summary.economy.happiness}</p>
+                    </div>
+                    <div class="hkua-progress-row" style="grid-template-columns: 1fr;">
+                        <p class="hkua-progress-name">VIP</p>
+                        <p class="hkua-progress-status">${summary.economy.vipMinutes} 分钟</p>
+                    </div>
+                </div>
                 <form class="hkua-login-form" data-hkua-login-form>
                     <label>
                         昵称
@@ -736,6 +1103,19 @@
         renderAllProgressPanels();
     }
 
+    function emitEconomyChange(reason, payload) {
+        window.dispatchEvent(new CustomEvent("happykua:economy-changed", {
+            detail: {
+                reason,
+                payload,
+                economy: getEconomyState(),
+                journey: getJourneyState(),
+                user: getCurrentUser()
+            }
+        }));
+        renderAllProgressPanels();
+    }
+
     const api = {
         ACCOUNT_INDEX_KEY,
         CURRENT_ACCOUNT_KEY,
@@ -748,6 +1128,12 @@
         setModuleData,
         clearModuleData,
         recordModuleEvent,
+        getEconomyState,
+        awardHappinessAction,
+        purchaseShopItem,
+        equipCosmetic,
+        getJourneyState,
+        shopItems,
         getProgressSummary,
         injectAccountWidget,
         renderProgressPanel,

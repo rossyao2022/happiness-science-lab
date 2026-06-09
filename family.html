@@ -1187,6 +1187,9 @@
             const report = await generateFamilyReport(profile);
             renderFamilyReport(report);
             saveFamilyReport();
+            window.HappyKuaAuth?.awardHappinessAction("familyReportGenerated", {
+                moduleId: "family"
+            });
             showToast("专业指导报告已生成。");
         }
 

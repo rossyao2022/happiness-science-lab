@@ -600,6 +600,9 @@
             if (!auth || auth.getCurrentUser().isGuest) {
                 localStorage.setItem(TALENT_REPORT_KEY, JSON.stringify(lastReport));
             }
+            window.HappyKuaAuth?.awardHappinessAction("talentReportGenerated", {
+                moduleId: "talent"
+            });
             renderReport(lastReport);
             showView("reportView");
         }

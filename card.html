@@ -86,6 +86,9 @@
                     lastActivityAt: new Date().toISOString()
                 }
             });
+            window.HappyKuaAuth?.awardHappinessAction("cardDraw", {
+                moduleId: "card"
+            });
         }
 
         function toggleLang() {

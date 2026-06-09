@@ -106,6 +106,9 @@
                     lastActivityAt: new Date().toISOString()
                 }
             });
+            window.HappyKuaAuth?.awardHappinessAction("bookOpened", {
+                moduleId: "book"
+            });
         }
 
         function renderBookArchive() {

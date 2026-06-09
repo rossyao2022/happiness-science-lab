@@ -739,6 +739,9 @@ function recordLife100Progress(age) {
       lastActivityAt: new Date().toISOString()
     }
   });
+  window.HappyKuaAuth?.awardHappinessAction("life100GuideGenerated", {
+    moduleId: "life100"
+  });
 }
 
 function clampAge(value) {
