@@ -27,6 +27,9 @@ const { chromium } = require("playwright");
   await page.locator("#journeyHero").waitFor({ state: "visible", timeout: 4000 });
   await assertVisibleText(page, "测试用户 的档案");
   await page.locator('[data-economy-field="coins"]').waitFor({ state: "visible", timeout: 4000 });
+  await page.locator('#journeyPath[data-scene="morning-start"]').waitFor({ state: "visible", timeout: 4000 });
+  assert.equal(await page.locator("#journeyAvatar").count(), 0, "journey should not render a floating overlay avatar");
+  assert.equal(await page.locator("#journeyPlane").count(), 0, "journey should not render a floating overlay plane");
 
   let economy = await page.evaluate(() => window.HappyKuaAuth.getEconomyState());
   assert.equal(economy.coins, 10, "daily homepage check-in should award 10 coins once");
@@ -82,6 +85,15 @@ const { chromium } = require("playwright");
   await assertVisibleText(page, "最近查看 42 岁");
   await page.locator("#journeyHero").getByText("幸福币").first().waitFor({ state: "visible", timeout: 4000 });
   await assertVisibleText(page, "最近查看 42 岁");
+  await page.evaluate(() => {
+    window.HappyKuaAuth.awardHappinessAction("familyReportGenerated", {
+      label: "测试家庭方案",
+      coins: 0,
+      happiness: 0,
+      daily: false
+    });
+  });
+  await page.locator('#journeyPath[data-scene="sunset-platform"]').waitFor({ state: "visible", timeout: 4000 });
 
   await page.evaluate(() => {
     window.HappyKuaAuth.awardHappinessAction("testBonus", {

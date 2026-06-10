@@ -193,6 +193,76 @@
         }
     ];
 
+    const journeyScenes = [
+        {
+            id: "morning-start",
+            label: "清晨出发",
+            image: "assets/journey-scenes/morning-start.jpg",
+            unlockAt: 0,
+            position: "center",
+            mobilePosition: "36% center"
+        },
+        {
+            id: "meadow-path",
+            label: "草坡练习",
+            image: "assets/journey-scenes/meadow-path.jpg",
+            unlockAt: 10,
+            position: "center",
+            mobilePosition: "56% center"
+        },
+        {
+            id: "cloud-bridge",
+            label: "云桥事件",
+            image: "assets/journey-scenes/cloud-bridge.jpg",
+            unlockAt: 20,
+            position: "center",
+            mobilePosition: "42% center"
+        },
+        {
+            id: "mountain-climb",
+            label: "山路攀登",
+            image: "assets/journey-scenes/mountain-climb.jpg",
+            unlockAt: 40,
+            position: "center",
+            mobilePosition: "32% center"
+        },
+        {
+            id: "sunset-platform",
+            label: "黄昏高台",
+            image: "assets/journey-scenes/sunset-platform.jpg",
+            unlockAt: 70,
+            position: "center",
+            mobilePosition: "62% center"
+        },
+        {
+            id: "star-camp",
+            label: "星夜营地",
+            image: "assets/journey-scenes/star-camp.jpg",
+            unlockAt: 100,
+            position: "center",
+            mobilePosition: "34% center"
+        },
+        {
+            id: "rain-clear",
+            label: "雨后放晴",
+            image: "assets/journey-scenes/rain-clear.jpg",
+            unlockAt: 140,
+            position: "center",
+            mobilePosition: "62% center"
+        }
+    ];
+
+    const journeyActionScenes = {
+        dailyCheckIn: "morning-start",
+        threeGoodThingsSaved: "cloud-bridge",
+        scienceVisit: "cloud-bridge",
+        cardDraw: "rain-clear",
+        life100GuideGenerated: "mountain-climb",
+        talentReportGenerated: "sunset-platform",
+        familyReportGenerated: "sunset-platform",
+        bookOpened: "star-camp"
+    };
+
     function now() {
         return new Date().toISOString();
     }
@@ -366,6 +436,19 @@
         return shopItems.find((item) => item.id === itemId) || null;
     }
 
+    function getJourneyScene(sceneId) {
+        return journeyScenes.find((scene) => scene.id === sceneId) || journeyScenes[0];
+    }
+
+    function pickJourneyScene(economy, latestEvent) {
+        if (latestEvent?.actionId && journeyActionScenes[latestEvent.actionId]) {
+            return getJourneyScene(journeyActionScenes[latestEvent.actionId]);
+        }
+
+        const unlockedScenes = journeyScenes.filter((scene) => economy.happiness >= scene.unlockAt);
+        return unlockedScenes[unlockedScenes.length - 1] || journeyScenes[0];
+    }
+
     function getRewardRule(actionId, payload = {}) {
         const rule = rewardRules[actionId] || {};
         return {
@@ -525,11 +608,15 @@
     function getJourneyState(userId = getCurrentUser().id) {
         const economy = getEconomyState(userId);
         const latestEvent = economy.eventLog[0] || null;
+        const scene = pickJourneyScene(economy, latestEvent);
         const progressInLevel = economy.happiness % 100;
         const avatarPosition = Math.min(92, 8 + progressInLevel * 0.84);
         return {
             economy,
             latestEvent,
+            scene,
+            sceneId: scene.id,
+            journeyScenes,
             avatarPosition,
             levelProgress: progressInLevel,
             nextLevelAt: economy.level * 100,
@@ -1134,6 +1221,7 @@
         equipCosmetic,
         getJourneyState,
         shopItems,
+        journeyScenes,
         getProgressSummary,
         injectAccountWidget,
         renderProgressPanel,

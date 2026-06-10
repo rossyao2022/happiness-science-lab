@@ -6,6 +6,20 @@ const authPath = resolve("auth.js");
 assert.ok(existsSync(authPath), "Missing shared auth.js account system");
 assert.ok(existsSync(resolve("assets/journey-hero-scene.png")), "Missing generated journey hero scene asset");
 
+const journeySceneAssets = [
+  "assets/journey-scenes/morning-start.jpg",
+  "assets/journey-scenes/meadow-path.jpg",
+  "assets/journey-scenes/cloud-bridge.jpg",
+  "assets/journey-scenes/mountain-climb.jpg",
+  "assets/journey-scenes/sunset-platform.jpg",
+  "assets/journey-scenes/star-camp.jpg",
+  "assets/journey-scenes/rain-clear.jpg",
+];
+
+for (const assetPath of journeySceneAssets) {
+  assert.ok(existsSync(resolve(assetPath)), `Missing journey scene asset: ${assetPath}`);
+}
+
 const auth = readFileSync(authPath, "utf8");
 const pages = {
   home: readFileSync(resolve("index.html"), "utf8"),
@@ -47,6 +61,8 @@ const authContracts = [
   ["account widget", "injectAccountWidget"],
   ["home progress panel", "renderProgressPanel"],
   ["shop items", "shopItems"],
+  ["journey scenes", "journeyScenes"],
+  ["journey scene id", "sceneId"],
   ["sunny hoodie shop item", "sunnyHoodie"],
   ["sprout cape shop item", "sproutCape"],
   ["rainbow backpack shop item", "rainbowBackpack"],
@@ -66,10 +82,12 @@ const pageContracts = [
   ["home progress panel", pages.home, "happykua-progress-panel"],
   ["home journey hero", pages.home, "journeyHero"],
   ["home journey path", pages.home, "journeyPath"],
-  ["home generated journey art", pages.home, "assets/journey-hero-scene.png"],
-  ["home 3d journey plane", pages.home, "journeyPlane"],
-  ["home floating event orbs", pages.home, "floating-event-orb"],
-  ["home avatar", pages.home, "journeyAvatar"],
+  ["home generated journey art", pages.home, "assets/journey-scenes/morning-start.jpg"],
+  ["home journey scene stack", pages.home, "data-journey-scene-stack"],
+  ["home journey scene layer", pages.home, "journey-scene-layer"],
+  ["home journey scene definitions", pages.home, "journeySceneDefinitions"],
+  ["home journey scene setter", pages.home, "setJourneyScene"],
+  ["home journey scene rotation", pages.home, "startJourneySceneRotation"],
   ["home event card", pages.home, "journeyEventCard"],
   ["home shop button", pages.home, "openJourneyShop"],
   ["home shop modal", pages.home, "journeyShop"],
@@ -101,5 +119,9 @@ const pageContracts = [
 for (const [label, html, token] of pageContracts) {
   assert.ok(html.includes(token), `Missing page contract ${label}: ${token}`);
 }
+
+assert.equal(pages.home.includes('id="journeyAvatar"'), false, "Home should not render a floating HTML avatar over the scene");
+assert.equal(pages.home.includes('id="journeyPlane"'), false, "Home should not render a floating HTML plane over the scene");
+assert.equal(pages.home.includes("floating-event-orb"), false, "Home should rely on generated scene art for floating events");
 
 console.log("user account contract passed");
